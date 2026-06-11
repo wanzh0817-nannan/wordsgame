@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>德语动词 · 考前突击</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1f3c;
+            color: #f5f5f7;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .screen {
+            display: none;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        .screen.active { display: block; }
+
+        #start-screen h1 {
+            text-align: center;
+            font-size: 2em;
+            margin: 30px 0 10px;
+            color: #c9a227;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #8b92a8;
+            margin-bottom: 25px;
+            font-size: 0.95em;
+        }
+
+        .batch-import {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .batch-import label {
+            display: block;
+            color: #8b92a8;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+        }
+
+        #batch-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.85em;
+            resize: vertical;
+            min-height: 120px;
+            font-family: monospace;
+        }
+
+        #batch-input::placeholder {
+            color: #5a6078;
+            font-size: 0.8em;
+        }
+
+        .btn-batch {
+            width: 100%;
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(201, 162, 39, 0.2);
+            border: 1px solid rgba(201, 162, 39, 0.4);
+            border-radius: 8px;
+            color: #c9a227;
+            cursor: pointer;
+            font-size: 0.95em;
+        }
+
+        .divider {
+            text-align: center;
+            color: #5a6078;
+            margin: 15px 0;
+            font-size: 0.85em;
+        }
+
+        .word-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .word-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.06);
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 0.85em;
+        }
+
+        .word-item .word-info {
+            color: #c0c4d0;
+        }
+
+        .word-item .word-info strong {
+            color: #fff;
+        }
+
+        .word-item button {
+            background: rgba(255,68,68,0.3);
+            border: none;
+            border-radius: 4px;
+            color: #ff6b6b;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+
+        .word-count {
+            text-align: center;
+            color: #8b92a8;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .btn-start {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #ff6b35, #ff8c5a);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-start:disabled {
+            background: #3a3f55;
+            cursor: not-allowed;
+        }
+
+        .btn-start:not(:disabled):hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-clear {
+            width: 100%;
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            color: #8b92a8;
+            cursor: pointer;
+        }
+
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .hp-bar-container {
+            flex: 1;
+            margin-right: 15px;
+        }
+
+        .hp-label {
+            font-size: 0.8em;
+            color: #8b92a8;
+            margin-bottom: 4px;
+        }
+
+        .hp-track {
+            height: 14px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 7px;
+            overflow: hidden;
+        }
+
+        .hp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4444, #ff6b35, #c9a227, #4ade80);
+            border-radius: 7px;
+            transition: width 0.5s ease;
+        }
+
+        .hp-text {
+            font-size: 0.85em;
+            color: #8b92a8;
+            margin-top: 4px;
+        }
+
+        .progress {
+            text-align: right;
+        }
+
+        .progress .current {
+            font-size: 1.5em;
+            color: #c9a227;
+            font-weight: bold;
+        }
+
+        .progress .total {
+            color: #8b92a8;
+            font-size: 0.9em;
+        }
+
+        .battle-area {
+            text-align: center;
+            padding: 20px 0;
+            position: relative;
+        }
+
+        .monster {
+            font-size: 90px;
+            display: inline-block;
+            transition: all 0.3s;
+            filter: drop-shadow(0 0 20px rgba(255,107,53,0.3));
+        }
+
+        @keyframes monsterFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        .monster.idle { animation: monsterFloat 3s ease-in-out infinite; }
+
+        @keyframes monsterHit {
+            0% { transform: scale(1); filter: brightness(1); }
+            25% { transform: scale(0.9); filter: brightness(2) sepia(1) hue-rotate(-50deg); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+
+        .monster.hit { animation: monsterHit 0.4s; }
+
+        @keyframes monsterDead {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        .monster.dead { animation: monsterDead 0.8s forwards; }
+
+        .monster-hp {
+            width: 180px;
+            height: 18px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 9px;
+            margin: 15px auto;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .monster-hp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4444, #ff6b35);
+            transition: width 0.4s ease;
+            border-radius: 7px;
+        }
+
+        .monster-hp-text {
+            color: #8b92a8;
+            font-size: 0.9em;
+        }
+
+        .prompt-area {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .stage-badge {
+            display: inline-block;
+            background: rgba(201, 162, 39, 0.15);
+            color: #c9a227;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-bottom: 12px;
+            border: 1px solid rgba(201, 162, 39, 0.3);
+        }
+
+        .prompt-label {
+            color: #8b92a8;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .prompt-value {
+            font-size: 1.3em;
+            color: #fff;
+            font-weight: bold;
+            word-break: break-all;
+            line-height: 1.5;
+        }
+
+        .prompt-target {
+            margin-top: 12px;
+            color: #ff6b35;
+            font-size: 1em;
+            font-weight: bold;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        #answer-input {
+            flex: 1;
+            padding: 16px;
+            background: rgba(255,255,255,0.08);
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1.1em;
+            transition: border-color 0.3s;
+        }
+
+        #answer-input:focus {
+            outline: none;
+            border-color: #ff6b35;
+        }
+
+        #answer-input.error {
+            border-color: #ff4444;
+            animation: inputShake 0.4s;
+        }
+
+        #answer-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @keyframes inputShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        @keyframes screenShake {
+            0%, 100% { transform: translateX(0); }
+            10% { transform: translateX(-8px); }
+            20% { transform: translateX(8px); }
+            30% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            50% { transform: translateX(-4px); }
+            60% { transform: translateX(4px); }
+            70% { transform: translateX(-2px); }
+            80% { transform: translateX(2px); }
+            90% { transform: translateX(-1px); }
+        }
+
+        .btn-attack {
+            padding: 16px 28px;
+            background: linear-gradient(135deg, #ff6b35, #ff8c5a);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-attack:active { transform: scale(0.96); }
+        .btn-attack:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            text-align: center;
+            min-height: 60px;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+            line-height: 1.6;
+        }
+
+        .feedback.hidden { opacity: 0; }
+
+        .feedback.correct {
+            background: rgba(74, 222, 128, 0.1);
+            color: #4ade80;
+        }
+
+        .feedback.wrong {
+            background: rgba(248, 113, 113, 0.1);
+            color: #f87171;
+        }
+
+        .feedback.skip {
+            background: rgba(201, 162, 39, 0.1);
+            color: #c9a227;
+        }
+
+        .result-content {
+            text-align: center;
+            padding-top: 50px;
+        }
+
+        .badge {
+            font-size: 100px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        @keyframes badgePop {
+            0% { transform: scale(0) rotate(-10deg); }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0); }
+        }
+
+        .badge { animation: badgePop 0.6s ease-out; }
+
+        .result-title {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .result-desc {
+            color: #8b92a8;
+            margin-bottom: 30px;
+            font-size: 1em;
+        }
+
+        .stats-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .stat-row:last-child { border-bottom: none; }
+
+        .stat-label { color: #8b92a8; }
+
+        .stat-value { font-weight: bold; }
+
+        .stat-value.good { color: #4ade80; }
+        .stat-value.bad { color: #f87171; }
+
+        .result-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-replay, .btn-new {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+
+        .btn-replay {
+            background: #ff6b35;
+            color: white;
+        }
+
+        .btn-new {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        .wrong-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .wrong-list h3 {
+            color: #8b92a8;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .wrong-item {
+            background: rgba(248, 113, 113, 0.08);
+            border-left: 3px solid #f87171;
+            padding: 10px 12px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 6px;
+            font-size: 0.85em;
+        }
+
+        .wrong-item .correct-answer {
+            color: #4ade80;
+        }
+
+        .saved-lists {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .saved-lists h3 {
+            color: #8b92a8;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .saved-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.06);
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 0.85em;
+        }
+
+        .saved-list-item .list-info {
+            color: #c0c4d0;
+            flex: 1;
+            margin-right: 8px;
+        }
+
+        .saved-list-item .list-info strong {
+            color: #fff;
+        }
+
+        .saved-list-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .saved-list-actions button {
+            border: none;
+            border-radius: 4px;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+
+        .btn-load {
+            background: rgba(74, 222, 128, 0.25);
+            color: #4ade80;
+        }
+
+        .btn-delete-list {
+            background: rgba(255,68,68,0.3);
+            color: #ff6b6b;
+        }
+
+        .saved-lists-empty {
+            color: #5a6078;
+            font-size: 0.85em;
+            text-align: center;
+            padding: 8px 0;
+        }
+
+        .resume-banner {
+            background: rgba(201, 162, 39, 0.12);
+            border: 1px solid rgba(201, 162, 39, 0.35);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .resume-banner p {
+            color: #c9a227;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .resume-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .resume-actions button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+
+        .btn-resume {
+            background: #ff6b35;
+            color: white;
+        }
+
+        .btn-discard-session {
+            background: rgba(255,255,255,0.1);
+            color: #8b92a8;
+        }
+
+        .round-info {
+            text-align: center;
+            color: #8b92a8;
+            font-size: 0.85em;
+            margin-bottom: 12px;
+        }
+
+        .storage-hint {
+            text-align: center;
+            color: #5a6078;
+            font-size: 0.75em;
+            margin-top: 15px;
+            line-height: 1.5;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #252b4a;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .modal-box h3 {
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .modal-box p {
+            color: #8b92a8;
+            font-size: 0.9em;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        #save-list-name {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1em;
+            margin-bottom: 16px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .modal-buttons button {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+        }
+
+        .btn-modal-primary {
+            background: #ff6b35;
+            color: white;
+        }
+
+        .btn-modal-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        .btn-modal-cancel {
+            background: transparent;
+            color: #8b92a8;
+        }
+
+        @media (max-width: 480px) {
+            .monster { font-size: 70px; }
+            .hud { flex-direction: column; gap: 10px; }
+            .hp-bar-container { margin-right: 0; width: 100%; }
+            .progress { text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div id="start-screen" class="screen active">
+        <h1>🛡️ 德语动词 · 考前突击</h1>
+        <p class="subtitle">粘贴明天要考的动词，开一局就能背</p>
+
+        <div id="resume-banner" class="resume-banner">
+            <p id="resume-text"></p>
+            <div class="resume-actions">
+                <button onclick="resumeSession()" class="btn-resume">继续练习</button>
+                <button onclick="discardSession()" class="btn-discard-session">放弃进度</button>
+            </div>
+        </div>
+
+        <div class="saved-lists">
+            <h3>📁 已保存的单词表（存在本机浏览器）</h3>
+            <div id="saved-lists-container"></div>
+        </div>
+
+        <div class="batch-import">
+            <label>📋 批量导入（格式：English Meaning | Infinitiv | 3. Person Singular | Präteritum | Perfekt）</label>
+            <textarea id="batch-input" placeholder="to get, to receive|bekommen|bekommt|bekam|hat bekommen&#10;to decide|beschließen|beschließt|beschloss|hat beschlossen&#10;to describe|beschreiben|beschreibt|beschrieb|hat beschrieben"></textarea>
+            <button onclick="batchImport()" class="btn-batch">📥 导入</button>
+        </div>
+
+        <div class="divider">— 已添加的单词 —</div>
+
+        <div id="word-list" class="word-list"></div>
+        <div class="word-count">已添加 <span id="word-count-num">0</span> 个单词 · 总血量: <span id="total-hp">0</span></div>
+
+        <button id="btn-start" onclick="startGame()" class="btn-start" disabled>
+            ⚔️ 开始战斗
+        </button>
+        <button onclick="clearAll()" class="btn-clear">🗑️ 清空全部</button>
+        <p class="storage-hint">词表与练习进度保存在本机浏览器，换设备需重新加载词表</p>
+    </div>
+
+    <div id="game-screen" class="screen">
+        <div id="round-info" class="round-info"></div>
+        <div class="hud">
+            <div class="hp-bar-container">
+                <div class="hp-label">❤️ 玩家生命</div>
+                <div class="hp-track">
+                    <div id="player-hp-fill" class="hp-fill" style="width: 100%"></div>
+                </div>
+                <div class="hp-text"><span id="player-hp-current">0</span> / <span id="player-hp-total">0</span></div>
+            </div>
+            <div class="progress">
+                <div class="current"><span id="current-word">1</span><span class="total">/<span id="total-word">0</span></span></div>
+                <div style="color:#8b92a8;font-size:0.8em">当前单词</div>
+            </div>
+        </div>
+
+        <div class="battle-area">
+            <div id="monster" class="monster idle">👾</div>
+            <div class="monster-hp">
+                <div id="monster-hp-fill" class="monster-hp-fill" style="width: 100%"></div>
+            </div>
+            <div class="monster-hp-text">妖怪 HP: <span id="monster-hp-num">4</span>/4</div>
+        </div>
+
+        <div class="prompt-area">
+            <div class="stage-badge" id="stage-badge">阶段 1/4</div>
+            <div class="prompt-label">English Meaning</div>
+            <div class="prompt-value" id="prompt-value">-</div>
+            <div class="prompt-target" id="prompt-target">请输入 Infinitiv</div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="answer-input" placeholder="输入答案..." autocomplete="off" />
+            <button onclick="submitAnswer()" class="btn-attack">⚔️</button>
+        </div>
+
+        <div id="feedback" class="feedback hidden"></div>
+    </div>
+
+    <div id="result-screen" class="screen">
+        <div class="result-content">
+            <div id="result-badge" class="badge"></div>
+            <h2 id="result-title" class="result-title"></h2>
+            <p id="result-desc" class="result-desc"></p>
+
+            <div class="stats-box">
+                <div class="stat-row">
+                    <span class="stat-label">总题数</span>
+                    <span class="stat-value" id="stat-total">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">答对</span>
+                    <span class="stat-value good" id="stat-correct">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">跳过/答错</span>
+                    <span class="stat-value bad" id="stat-wrong">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">剩余血量</span>
+                    <span class="stat-value" id="stat-hp">0%</span>
+                </div>
+            </div>
+
+            <div id="wrong-words" class="wrong-list" style="display:none">
+                <h3>📚 未掌握的词（下轮必考）</h3>
+                <div id="wrong-list-content"></div>
+            </div>
+
+            <div class="result-buttons">
+                <button id="btn-replay" onclick="replayGame()" class="btn-replay">🔄 再玩一次</button>
+                <button onclick="backToStart()" class="btn-new">🏠 重新输入单词</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="save-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3>💾 保存单词表</h3>
+            <p id="save-modal-desc">当前词表尚未保存，起个名字方便以后加载复测。</p>
+            <input type="text" id="save-list-name" placeholder="例如：6月10日动词" maxlength="40" />
+            <div class="modal-buttons">
+                <button onclick="confirmSaveAndLeave()" class="btn-modal-primary">保存并返回</button>
+                <button onclick="leaveWithoutSave()" class="btn-modal-secondary">不保存</button>
+                <button onclick="closeSaveModal()" class="btn-modal-cancel">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_LISTS = 'wordsgame_lists';
+        const STORAGE_SESSION = 'wordsgame_session';
+
+        let wordData = [];
+        let roundWordList = [];
+        let wrongWords = [];
+        let currentWordIndex = 0;
+        let currentStage = 1;
+        let playerHP = 0;
+        let playerHPTotal = 0;
+        let monsterHP = 4;
+        let correctCount = 0;
+        let wrongCount = 0;
+        let currentWrongAttempts = 0;
+        let currentWordSession = { hadSkip: false };
+        let round = 1;
+        let roundSpotCount = 0;
+        let listId = null;
+        let dirty = false;
+
+        function copyWord(w) {
+            return { english: w.english, infinitiv: w.infinitiv, person3: w.person3, prateritum: w.prateritum, perfekt: w.perfekt };
+        }
+
+        function shuffle(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        function getLists() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_LISTS) || '{}');
+            } catch {
+                return {};
+            }
+        }
+
+        function setLists(lists) {
+            localStorage.setItem(STORAGE_LISTS, JSON.stringify(lists));
+            renderSavedLists();
+        }
+
+        function markDirty() {
+            dirty = true;
+            saveSession();
+        }
+
+        function saveSession() {
+            if (wordData.length === 0) {
+                localStorage.removeItem(STORAGE_SESSION);
+                updateResumeBanner();
+                return;
+            }
+            const session = {
+                listId,
+                wordData: wordData.map(copyWord),
+                wrongWords: wrongWords.map(copyWord),
+                round,
+                dirty,
+                lastScreen: document.querySelector('.screen.active')?.id || 'start-screen'
+            };
+            localStorage.setItem(STORAGE_SESSION, JSON.stringify(session));
+            updateResumeBanner();
+        }
+
+        function loadSessionOnStartup() {
+            try {
+                const raw = localStorage.getItem(STORAGE_SESSION);
+                if (!raw) return;
+                const session = JSON.parse(raw);
+                if (!session.wordData?.length) return;
+                wordData = session.wordData.map(copyWord);
+                wrongWords = (session.wrongWords || []).map(copyWord);
+                round = session.round || 1;
+                listId = session.listId || null;
+                dirty = !!session.dirty;
+                updateWordList();
+                updateResumeBanner();
+            } catch {
+                localStorage.removeItem(STORAGE_SESSION);
+            }
+        }
+
+        function updateResumeBanner() {
+            const banner = document.getElementById('resume-banner');
+            const text = document.getElementById('resume-text');
+            if (wordData.length === 0) {
+                banner.style.display = 'none';
+                return;
+            }
+            const wrongN = wrongWords.length;
+            if (round > 1 || wrongN > 0) {
+                banner.style.display = 'block';
+                const namePart = listId ? `「${listId}」` : '当前词表';
+                text.textContent = wrongN > 0
+                    ? `${namePart}：第 ${round} 轮，还有 ${wrongN} 个词未掌握。`
+                    : `${namePart}：上次已全部掌握，可再练一遍。`;
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+
+        function resumeSession() {
+            if (wrongWords.length > 0) {
+                replayGame();
+            } else if (wordData.length > 0) {
+                startGameFresh();
+            }
+        }
+
+        function discardSession() {
+            if (!confirm('确定放弃当前练习进度？词表内容会保留。')) return;
+            wrongWords = [];
+            round = 1;
+            saveSession();
+            updateResumeBanner();
+        }
+
+        function renderSavedLists() {
+            const container = document.getElementById('saved-lists-container');
+            const lists = getLists();
+            const names = Object.keys(lists).sort((a, b) => (lists[b].lastPlayed || '').localeCompare(lists[a].lastPlayed || ''));
+            if (names.length === 0) {
+                container.innerHTML = '<div class="saved-lists-empty">暂无保存的词表</div>';
+                return;
+            }
+            container.innerHTML = '';
+            names.forEach(name => {
+                const item = lists[name];
+                const div = document.createElement('div');
+                div.className = 'saved-list-item';
+                const info = document.createElement('span');
+                info.className = 'list-info';
+                info.innerHTML = `<strong>${escapeHtml(name)}</strong> · ${item.words.length} 个词${item.lastPlayed ? ' · ' + item.lastPlayed : ''}`;
+                const actions = document.createElement('div');
+                actions.className = 'saved-list-actions';
+                const loadBtn = document.createElement('button');
+                loadBtn.className = 'btn-load';
+                loadBtn.textContent = '加载';
+                loadBtn.onclick = () => loadWordList(name);
+                const delBtn = document.createElement('button');
+                delBtn.className = 'btn-delete-list';
+                delBtn.textContent = '删除';
+                delBtn.onclick = () => deleteWordList(name);
+                actions.appendChild(loadBtn);
+                actions.appendChild(delBtn);
+                div.appendChild(info);
+                div.appendChild(actions);
+                container.appendChild(div);
+            });
+        }
+
+        function escapeHtml(s) {
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+
+        function saveWordList(name) {
+            name = name.trim();
+            if (!name) return false;
+            const lists = getLists();
+            const today = new Date().toISOString().slice(0, 10);
+            lists[name] = {
+                name,
+                words: wordData.map(copyWord),
+                createdAt: lists[name]?.createdAt || today,
+                lastPlayed: today
+            };
+            setLists(lists);
+            listId = name;
+            dirty = false;
+            saveSession();
+            return true;
+        }
+
+        function loadWordList(name) {
+            const lists = getLists();
+            const item = lists[name];
+            if (!item) return;
+            wordData = item.words.map(copyWord);
+            wrongWords = [];
+            round = 1;
+            listId = name;
+            dirty = false;
+            item.lastPlayed = new Date().toISOString().slice(0, 10);
+            setLists(lists);
+            updateWordList();
+            saveSession();
+        }
+
+        function deleteWordList(name) {
+            if (!confirm(`确定删除词表「${name}」？`)) return;
+            const lists = getLists();
+            delete lists[name];
+            setLists(lists);
+            if (listId === name) {
+                listId = null;
+                dirty = true;
+                saveSession();
+            }
+        }
+
+        function needsSavePrompt() {
+            return wordData.length > 0 && (dirty || !listId);
+        }
+
+        function openSaveModal() {
+            document.getElementById('save-list-name').value = listId || '';
+            document.getElementById('save-modal').classList.add('active');
+            document.getElementById('save-list-name').focus();
+        }
+
+        function closeSaveModal() {
+            document.getElementById('save-modal').classList.remove('active');
+        }
+
+        function confirmSaveAndLeave() {
+            const name = document.getElementById('save-list-name').value.trim();
+            if (!name) {
+                alert('请输入词表名称');
+                return;
+            }
+            const lists = getLists();
+            if (lists[name] && name !== listId && !confirm(`词表「${name}」已存在，是否覆盖？`)) return;
+            saveWordList(name);
+            closeSaveModal();
+            resetEditorState();
+            goToStartScreen();
+        }
+
+        function leaveWithoutSave() {
+            closeSaveModal();
+            resetEditorState();
+            goToStartScreen();
+        }
+
+        function resetEditorState() {
+            wordData = [];
+            wrongWords = [];
+            round = 1;
+            listId = null;
+            dirty = false;
+            localStorage.removeItem(STORAGE_SESSION);
+            updateWordList();
+            updateResumeBanner();
+        }
+
+        function goToStartScreen() {
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('result-screen').classList.remove('active');
+            document.getElementById('start-screen').classList.add('active');
+            saveSession();
+        }
+
+        function batchImport() {
+            const text = document.getElementById('batch-input').value.trim();
+            if (!text) return;
+
+            const lines = text.split('\n');
+            let added = 0;
+
+            lines.forEach(line => {
+                line = line.trim();
+                if (!line) return;
+
+                const parts = line.split('|').map(s => s.trim());
+                if (parts.length >= 5) {
+                    wordData.push({
+                        english: parts[0],
+                        infinitiv: parts[1],
+                        person3: parts[2],
+                        prateritum: parts[3],
+                        perfekt: parts[4]
+                    });
+                    added++;
+                }
+            });
+
+            if (added > 0) {
+                document.getElementById('batch-input').value = '';
+                listId = null;
+                wrongWords = [];
+                round = 1;
+                markDirty();
+                updateWordList();
+            }
+        }
+
+        function updateWordList() {
+            const list = document.getElementById('word-list');
+            list.innerHTML = '';
+
+            wordData.forEach((w, i) => {
+                const item = document.createElement('div');
+                item.className = 'word-item';
+                item.innerHTML = `
+                    <span class="word-info"><strong>${escapeHtml(w.infinitiv)}</strong> · ${escapeHtml(w.english)}</span>
+                    <button onclick="removeWord(${i})">删除</button>
+                `;
+                list.appendChild(item);
+            });
+
+            const totalHP = wordData.length * 4;
+            document.getElementById('word-count-num').textContent = wordData.length;
+            document.getElementById('total-hp').textContent = totalHP;
+            document.getElementById('btn-start').disabled = wordData.length === 0;
+
+            const titleExtra = listId ? ` · ${listId}` : (dirty ? ' · 未保存' : '');
+            document.querySelector('#start-screen .subtitle').textContent =
+                '粘贴明天要考的动词，开一局就能背' + (wordData.length ? titleExtra : '');
+        }
+
+        function removeWord(i) {
+            wordData.splice(i, 1);
+            markDirty();
+            updateWordList();
+        }
+
+        function clearAll() {
+            if (wordData.length && !confirm('确定清空当前词表？')) return;
+            resetEditorState();
+        }
+
+        function isInWrongWords(word) {
+            return wrongWords.some(w => w.english === word.english);
+        }
+
+        function addToWrongWords(word) {
+            if (!isInWrongWords(word)) {
+                wrongWords.push(copyWord(word));
+            }
+        }
+
+        function removeFromWrongWords(word) {
+            wrongWords = wrongWords.filter(w => w.english !== word.english);
+        }
+
+        function buildRoundWordList() {
+            if (round <= 1) {
+                roundSpotCount = 0;
+                return wordData.map(copyWord);
+            }
+            const wrong = wrongWords.map(copyWord);
+            const mastered = wordData.filter(w => !isInWrongWords(w));
+            if (mastered.length === 0) {
+                roundSpotCount = 0;
+                return wrong;
+            }
+            roundSpotCount = Math.min(mastered.length, Math.max(1, Math.ceil(mastered.length * 0.3)));
+            const spot = shuffle(mastered).slice(0, roundSpotCount).map(copyWord);
+            const seen = new Set();
+            const list = [];
+            [...wrong, ...spot].forEach(w => {
+                if (!seen.has(w.english)) {
+                    seen.add(w.english);
+                    list.push(w);
+                }
+            });
+            return list;
+        }
+
+        function updateRoundInfo() {
+            const el = document.getElementById('round-info');
+            if (round <= 1) {
+                el.textContent = `第 1 轮 · 全表 ${roundWordList.length} 个词`;
+            } else {
+                const wrongN = wrongWords.length;
+                el.textContent = `第 ${round} 轮 · 错题 ${wrongN} 个 + 抽查 ${roundSpotCount} 个 · 共 ${roundWordList.length} 个词`;
+            }
+        }
+
+        function startGameFresh() {
+            round = 1;
+            wrongWords = [];
+            startGameInternal();
+        }
+
+        function startGame() {
+            startGameFresh();
+        }
+
+        function startGameInternal() {
+            if (wordData.length === 0) return;
+
+            roundWordList = buildRoundWordList();
+            if (roundWordList.length === 0) return;
+
+            currentWordIndex = 0;
+            correctCount = 0;
+            wrongCount = 0;
+            playerHPTotal = roundWordList.length * 4;
+            playerHP = playerHPTotal;
+
+            document.getElementById('start-screen').classList.remove('active');
+            document.getElementById('result-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+
+            updateRoundInfo();
+            updateHUD();
+            loadWord(0);
+            saveSession();
+
+            const input = document.getElementById('answer-input');
+            input.onkeypress = function(e) {
+                if (e.key === 'Enter') submitAnswer();
+            };
+        }
+
+        function getCurrentWord() {
+            return roundWordList[currentWordIndex];
+        }
+
+        function finishCurrentWord() {
+            const word = getCurrentWord();
+            if (currentWordSession.hadSkip) {
+                addToWrongWords(word);
+            } else {
+                removeFromWrongWords(word);
+            }
+            saveSession();
+        }
+
+        function advanceToNextWord() {
+            if (currentWordIndex + 1 < roundWordList.length) {
+                loadWord(currentWordIndex + 1);
+                updateHUD();
+            } else {
+                endGame();
+            }
+        }
+
+        function loadWord(index) {
+            currentWordIndex = index;
+            currentStage = 1;
+            monsterHP = 4;
+            currentWrongAttempts = 0;
+            currentWordSession = { hadSkip: false };
+
+            const monster = document.getElementById('monster');
+            monster.className = 'monster idle';
+            monster.style.opacity = '1';
+            monster.style.transform = 'scale(1)';
+
+            updateMonsterHP();
+            updatePrompt();
+
+            const input = document.getElementById('answer-input');
+            input.value = '';
+            input.disabled = false;
+            input.classList.remove('error');
+            input.focus();
+
+            hideFeedback();
+        }
+
+        function updatePrompt() {
+            const word = getCurrentWord();
+
+            document.getElementById('stage-badge').textContent = `阶段 ${currentStage}/4`;
+            document.getElementById('prompt-value').textContent = word.english;
+
+            const targets = ['Infinitiv', '3. Person Singular', 'Präteritum', 'Perfekt'];
+            document.getElementById('prompt-target').textContent = `请输入 ${targets[currentStage - 1]}`;
+        }
+
+        function getCorrectAnswer() {
+            const word = getCurrentWord();
+            switch(currentStage) {
+                case 1: return word.infinitiv;
+                case 2: return word.person3;
+                case 3: return word.prateritum;
+                case 4: return word.perfekt;
+            }
+        }
+
+        function normalizeAnswer(s) {
+            return s
+                .trim()
+                .replace(/\.\.\./g, ' ')
+                .replace(/\s+/g, ' ');
+        }
+
+        function answersMatch(userInput, correctAnswer) {
+            const normalizedInput = normalizeAnswer(userInput);
+            if (correctAnswer.includes('/')) {
+                return correctAnswer.split('/').some(alt => normalizeAnswer(alt) === normalizedInput);
+            }
+            return normalizedInput === normalizeAnswer(correctAnswer);
+        }
+
+        function updateHUD() {
+            const pct = playerHPTotal > 0 ? (playerHP / playerHPTotal * 100) : 0;
+            document.getElementById('player-hp-fill').style.width = pct + '%';
+            document.getElementById('player-hp-current').textContent = playerHP;
+            document.getElementById('player-hp-total').textContent = playerHPTotal;
+            document.getElementById('current-word').textContent = currentWordIndex + 1;
+            document.getElementById('total-word').textContent = roundWordList.length;
+        }
+
+        function updateMonsterHP() {
+            const pct = (monsterHP / 4) * 100;
+            document.getElementById('monster-hp-fill').style.width = pct + '%';
+            document.getElementById('monster-hp-num').textContent = monsterHP;
+
+            const emojis = ['👾', '👹', '👺', '💀'];
+            document.getElementById('monster').textContent = emojis[4 - monsterHP] || '💀';
+        }
+
+        function shakeScreen() {
+            document.body.style.animation = 'screenShake 0.4s';
+            setTimeout(() => {
+                document.body.style.animation = '';
+            }, 400);
+        }
+
+        function submitAnswer() {
+            const input = document.getElementById('answer-input');
+            const value = input.value.trim();
+            const word = getCurrentWord();
+
+            if (!value || input.disabled) return;
+
+            const correctAnswer = getCorrectAnswer();
+            const isCorrect = answersMatch(value, correctAnswer);
+
+            if (isCorrect) {
+                correctCount++;
+                monsterHP--;
+                currentWrongAttempts = 0;
+
+                showFeedback('✅ 命中！', 'correct');
+
+                const monster = document.getElementById('monster');
+                monster.classList.remove('idle');
+                monster.classList.add('hit');
+                setTimeout(() => monster.classList.remove('hit'), 400);
+
+                updateMonsterHP();
+
+                if (monsterHP <= 0) {
+                    setTimeout(() => {
+                        monster.classList.remove('hit');
+                        monster.classList.add('dead');
+
+                        setTimeout(() => {
+                            finishCurrentWord();
+                            advanceToNextWord();
+                        }, 800);
+                    }, 400);
+                } else {
+                    setTimeout(() => {
+                        currentStage++;
+                        updatePrompt();
+                        input.value = '';
+                        input.focus();
+                        hideFeedback();
+                    }, 600);
+                }
+
+            } else {
+                currentWrongAttempts++;
+                playerHP--;
+                wrongCount++;
+
+                shakeScreen();
+
+                input.classList.add('error');
+                setTimeout(() => input.classList.remove('error'), 400);
+
+                if (currentWrongAttempts >= 2) {
+                    monsterHP--;
+                    currentWordSession.hadSkip = true;
+                    addToWrongWords(word);
+
+                    showFeedback(`❌ 答案：${normalizeAnswer(correctAnswer)}<br>跳过该阶段`, 'skip');
+
+                    input.disabled = true;
+
+                    setTimeout(() => {
+                        input.disabled = false;
+
+                        if (monsterHP <= 0) {
+                            const monster = document.getElementById('monster');
+                            monster.classList.remove('idle');
+                            monster.classList.add('dead');
+
+                            setTimeout(() => {
+                                finishCurrentWord();
+                                advanceToNextWord();
+                            }, 800);
+                        } else {
+                            currentStage++;
+                            updatePrompt();
+                            input.value = '';
+                            input.focus();
+                            hideFeedback();
+                        }
+                    }, 2000);
+
+                } else {
+                    input.value = '';
+                    setTimeout(() => {
+                        input.focus();
+                    }, 300);
+                }
+
+                updateHUD();
+                saveSession();
+            }
+        }
+
+        function showFeedback(text, type) {
+            const fb = document.getElementById('feedback');
+            fb.innerHTML = text;
+            fb.className = 'feedback ' + type;
+        }
+
+        function hideFeedback() {
+            const fb = document.getElementById('feedback');
+            fb.className = 'feedback hidden';
+        }
+
+        function endGame() {
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('result-screen').classList.add('active');
+
+            const hpPct = playerHPTotal > 0 ? Math.round((playerHP / playerHPTotal) * 100) : 0;
+            const allMastered = wrongWords.length === 0;
+
+            const badge = document.getElementById('result-badge');
+            const title = document.getElementById('result-title');
+            const desc = document.getElementById('result-desc');
+            const replayBtn = document.getElementById('btn-replay');
+
+            document.getElementById('stat-total').textContent = playerHPTotal;
+            document.getElementById('stat-correct').textContent = correctCount;
+            document.getElementById('stat-wrong').textContent = wrongCount;
+            document.getElementById('stat-hp').textContent = hpPct + '%';
+
+            if (allMastered) {
+                badge.innerHTML = '🏆';
+                title.textContent = '全部掌握！';
+                title.style.color = '#c9a227';
+                desc.textContent = round > 1
+                    ? `第 ${round} 轮完成，所有词四阶段均答对！`
+                    : '太棒了！整张词表已掌握！';
+                replayBtn.textContent = '🔄 再练一遍全表';
+            } else if (hpPct >= 75) {
+                badge.innerHTML = '🥈';
+                title.textContent = '继续加油';
+                title.style.color = '#c0c0c0';
+                desc.textContent = `第 ${round} 轮结束，还有 ${wrongWords.length} 个词未掌握。下轮：错题 + 约 30% 抽查。`;
+                replayBtn.textContent = `🔄 再玩一次（${wrongWords.length} 个错题 + 抽查）`;
+            } else {
+                badge.innerHTML = wrongWords.length > 3 ? '💔' : '🥉';
+                title.textContent = '还需努力';
+                title.style.color = wrongWords.length > 3 ? '#ff4444' : '#cd7f32';
+                desc.textContent = `第 ${round} 轮结束，${wrongWords.length} 个词未掌握。下轮将考错题并抽查已掌握的词。`;
+                replayBtn.textContent = `🔄 再玩一次（${wrongWords.length} 个错题 + 抽查）`;
+            }
+
+            if (wrongWords.length > 0) {
+                document.getElementById('wrong-words').style.display = 'block';
+                const content = document.getElementById('wrong-list-content');
+                content.innerHTML = '';
+                wrongWords.forEach(w => {
+                    const div = document.createElement('div');
+                    div.className = 'wrong-item';
+                    div.innerHTML = `<strong>${escapeHtml(w.infinitiv)}</strong> · ${escapeHtml(w.english)}<br><span class="correct-answer">${escapeHtml(w.person3)} · ${escapeHtml(w.prateritum)} · ${escapeHtml(w.perfekt)}</span>`;
+                    content.appendChild(div);
+                });
+            } else {
+                document.getElementById('wrong-words').style.display = 'none';
+            }
+
+            if (listId) {
+                const lists = getLists();
+                if (lists[listId]) {
+                    lists[listId].lastPlayed = new Date().toISOString().slice(0, 10);
+                    setLists(lists);
+                }
+            }
+            saveSession();
+        }
+
+        function replayGame() {
+            if (wrongWords.length === 0) {
+                startGameFresh();
+                return;
+            }
+            round++;
+            document.getElementById('result-screen').classList.remove('active');
+            startGameInternal();
+        }
+
+        function backToStart() {
+            if (needsSavePrompt()) {
+                openSaveModal();
+            } else {
+                goToStartScreen();
+            }
+        }
+
+        document.getElementById('save-list-name').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') confirmSaveAndLeave();
+        });
+
+        renderSavedLists();
+        loadSessionOnStartup();
+    </script>
+</body>
+</html>
