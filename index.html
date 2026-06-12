@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>德语动词 · 考前突击</title>
+    <title>德语词汇 · 考前突击</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -114,6 +114,19 @@
         .word-item .word-info strong {
             color: #fff;
         }
+
+        .type-tag {
+            display: inline-block;
+            font-size: 0.75em;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        .type-tag.word { background: rgba(96, 165, 250, 0.2); color: #60a5fa; }
+        .type-tag.verb { background: rgba(255, 107, 53, 0.2); color: #ff8c5a; }
+        .type-tag.phrase { background: rgba(167, 139, 250, 0.2); color: #a78bfa; }
 
         .word-item button {
             background: rgba(255,68,68,0.3);
@@ -723,8 +736,8 @@
 </head>
 <body>
     <div id="start-screen" class="screen active">
-        <h1>🛡️ 德语动词 · 考前突击</h1>
-        <p class="subtitle">粘贴明天要考的动词，开一局就能背</p>
+        <h1>🛡️ 德语词汇 · 考前突击</h1>
+        <p class="subtitle">粘贴明天要考的词汇，开一局就能背</p>
 
         <div id="resume-banner" class="resume-banner">
             <p id="resume-text"></p>
@@ -740,8 +753,8 @@
         </div>
 
         <div class="batch-import">
-            <label>📋 批量导入（格式：English Meaning | Infinitiv | 3. Person Singular | Präteritum | Perfekt）</label>
-            <textarea id="batch-input" placeholder="to get, to receive|bekommen|bekommt|bekam|hat bekommen&#10;to decide|beschließen|beschließt|beschloss|hat beschlossen&#10;to describe|beschreiben|beschreibt|beschrieb|hat beschrieben"></textarea>
+            <label>📋 批量导入（类型|English|德语|3.Person|Präteritum|Perfekt|同义原形|同义3.Person|同义Prät.|同义Perf.）</label>
+            <textarea id="batch-input" placeholder="word|the coin|die Münze&#10;phrase|to wipe the blackboard|die Tafel abwischen&#10;verb|to run|rennen|rennt|rannte|ist gerannt&#10;verb|to steal|stehlen|stiehlt|stahl|hat gestohlen|klauen|klaut|klaute|hat geklaut&#10;&#10;旧格式（无类型）仍支持：English|Infinitiv|3.Person|Präteritum|Perfekt"></textarea>
             <button onclick="batchImport()" class="btn-batch">📥 导入</button>
         </div>
 
@@ -778,7 +791,7 @@
             <div class="monster-hp">
                 <div id="monster-hp-fill" class="monster-hp-fill" style="width: 100%"></div>
             </div>
-            <div class="monster-hp-text">妖怪 HP: <span id="monster-hp-num">4</span>/4</div>
+            <div class="monster-hp-text">妖怪 HP: <span id="monster-hp-num">4</span>/<span id="monster-hp-max">4</span></div>
         </div>
 
         <div class="prompt-area">
@@ -867,8 +880,79 @@
         let listId = null;
         let dirty = false;
 
+        const WORD_TYPES = ['word', 'verb', 'phrase'];
+        const TYPE_LABELS = { word: '词汇', verb: '动词', phrase: '短语' };
+
+        function normalizeWord(w) {
+            return {
+                type: w.type && WORD_TYPES.includes(w.type) ? w.type : 'verb',
+                english: w.english || '',
+                infinitiv: w.infinitiv || '',
+                person3: w.person3 || '',
+                prateritum: w.prateritum || '',
+                perfekt: w.perfekt || '',
+                synInfinitiv: w.synInfinitiv || '',
+                synPerson3: w.synPerson3 || '',
+                synPrateritum: w.synPrateritum || '',
+                synPerfekt: w.synPerfekt || ''
+            };
+        }
+
         function copyWord(w) {
-            return { english: w.english, infinitiv: w.infinitiv, person3: w.person3, prateritum: w.prateritum, perfekt: w.perfekt };
+            return normalizeWord(w);
+        }
+
+        function getStageCount(w) {
+            return normalizeWord(w).type === 'verb' ? 4 : 1;
+        }
+
+        function getWordKey(w) {
+            w = normalizeWord(w);
+            return w.english + '\0' + w.infinitiv;
+        }
+
+        function getWordDisplayDe(w) {
+            w = normalizeWord(w);
+            return w.infinitiv;
+        }
+
+        function parseImportLine(line) {
+            const parts = line.split('|').map(s => s.trim());
+            if (parts.length < 2) return null;
+
+            let type = 'verb';
+            let offset = 0;
+            if (WORD_TYPES.includes(parts[0].toLowerCase())) {
+                type = parts[0].toLowerCase();
+                offset = 1;
+            }
+
+            if (type === 'word' || type === 'phrase') {
+                if (parts.length < offset + 2) return null;
+                return normalizeWord({
+                    type,
+                    english: parts[offset],
+                    infinitiv: parts[offset + 1]
+                });
+            }
+
+            if (parts.length < offset + 5) return null;
+            return normalizeWord({
+                type: 'verb',
+                english: parts[offset],
+                infinitiv: parts[offset + 1],
+                person3: parts[offset + 2],
+                prateritum: parts[offset + 3],
+                perfekt: parts[offset + 4],
+                synInfinitiv: parts[offset + 5] || '',
+                synPerson3: parts[offset + 6] || '',
+                synPrateritum: parts[offset + 7] || '',
+                synPerfekt: parts[offset + 8] || ''
+            });
+        }
+
+        function sumStageCount(words) {
+            return words.reduce((sum, w) => sum + getStageCount(w), 0);
         }
 
         function shuffle(arr) {
@@ -922,8 +1006,8 @@
                 if (!raw) return;
                 const session = JSON.parse(raw);
                 if (!session.wordData?.length) return;
-                wordData = session.wordData.map(copyWord);
-                wrongWords = (session.wrongWords || []).map(copyWord);
+                wordData = session.wordData.map(w => normalizeWord(w));
+                wrongWords = (session.wrongWords || []).map(w => normalizeWord(w));
                 round = session.round || 1;
                 listId = session.listId || null;
                 dirty = !!session.dirty;
@@ -1031,7 +1115,7 @@
             const lists = getLists();
             const item = lists[name];
             if (!item) return;
-            wordData = item.words.map(copyWord);
+            wordData = item.words.map(w => normalizeWord(w));
             wrongWords = [];
             round = 1;
             listId = name;
@@ -1115,17 +1199,11 @@
 
             lines.forEach(line => {
                 line = line.trim();
-                if (!line) return;
+                if (!line || line.startsWith('#')) return;
 
-                const parts = line.split('|').map(s => s.trim());
-                if (parts.length >= 5) {
-                    wordData.push({
-                        english: parts[0],
-                        infinitiv: parts[1],
-                        person3: parts[2],
-                        prateritum: parts[3],
-                        perfekt: parts[4]
-                    });
+                const entry = parseImportLine(line);
+                if (entry) {
+                    wordData.push(entry);
                     added++;
                 }
             });
@@ -1145,23 +1223,24 @@
             list.innerHTML = '';
 
             wordData.forEach((w, i) => {
+                const nw = normalizeWord(w);
                 const item = document.createElement('div');
                 item.className = 'word-item';
                 item.innerHTML = `
-                    <span class="word-info"><strong>${escapeHtml(w.infinitiv)}</strong> · ${escapeHtml(w.english)}</span>
+                    <span class="word-info"><span class="type-tag ${nw.type}">${TYPE_LABELS[nw.type]}</span><strong>${escapeHtml(getWordDisplayDe(nw))}</strong> · ${escapeHtml(nw.english)}</span>
                     <button onclick="removeWord(${i})">删除</button>
                 `;
                 list.appendChild(item);
             });
 
-            const totalHP = wordData.length * 4;
+            const totalHP = sumStageCount(wordData);
             document.getElementById('word-count-num').textContent = wordData.length;
             document.getElementById('total-hp').textContent = totalHP;
             document.getElementById('btn-start').disabled = wordData.length === 0;
 
             const titleExtra = listId ? ` · ${listId}` : (dirty ? ' · 未保存' : '');
             document.querySelector('#start-screen .subtitle').textContent =
-                '粘贴明天要考的动词，开一局就能背' + (wordData.length ? titleExtra : '');
+                '粘贴明天要考的词汇，开一局就能背' + (wordData.length ? titleExtra : '');
         }
 
         function removeWord(i) {
@@ -1176,7 +1255,8 @@
         }
 
         function isInWrongWords(word) {
-            return wrongWords.some(w => w.english === word.english);
+            const key = getWordKey(word);
+            return wrongWords.some(w => getWordKey(w) === key);
         }
 
         function addToWrongWords(word) {
@@ -1186,7 +1266,8 @@
         }
 
         function removeFromWrongWords(word) {
-            wrongWords = wrongWords.filter(w => w.english !== word.english);
+            const key = getWordKey(word);
+            wrongWords = wrongWords.filter(w => getWordKey(w) !== key);
         }
 
         function buildRoundWordList() {
@@ -1205,8 +1286,9 @@
             const seen = new Set();
             const list = [];
             [...wrong, ...spot].forEach(w => {
-                if (!seen.has(w.english)) {
-                    seen.add(w.english);
+                const key = getWordKey(w);
+                if (!seen.has(key)) {
+                    seen.add(key);
                     list.push(w);
                 }
             });
@@ -1242,7 +1324,7 @@
             currentWordIndex = 0;
             correctCount = 0;
             wrongCount = 0;
-            playerHPTotal = roundWordList.length * 4;
+            playerHPTotal = sumStageCount(roundWordList);
             playerHP = playerHPTotal;
 
             document.getElementById('start-screen').classList.remove('active');
@@ -1286,7 +1368,7 @@
         function loadWord(index) {
             currentWordIndex = index;
             currentStage = 1;
-            monsterHP = 4;
+            monsterHP = getStageCount(getCurrentWord());
             currentWrongAttempts = 0;
             currentWordSession = { hadSkip: false };
 
@@ -1308,23 +1390,66 @@
         }
 
         function updatePrompt() {
-            const word = getCurrentWord();
+            const word = normalizeWord(getCurrentWord());
+            const maxStage = getStageCount(word);
 
-            document.getElementById('stage-badge').textContent = `阶段 ${currentStage}/4`;
+            document.getElementById('stage-badge').textContent = `阶段 ${currentStage}/${maxStage}`;
             document.getElementById('prompt-value').textContent = word.english;
 
-            const targets = ['Infinitiv', '3. Person Singular', 'Präteritum', 'Perfekt'];
-            document.getElementById('prompt-target').textContent = `请输入 ${targets[currentStage - 1]}`;
+            if (word.type === 'verb') {
+                const targets = ['Infinitiv', '3. Person Singular', 'Präteritum', 'Perfekt'];
+                let hint = `请输入 ${targets[currentStage - 1]}`;
+                if (word.synInfinitiv) hint += '（可答近义词）';
+                document.getElementById('prompt-target').textContent = hint;
+            } else if (word.type === 'phrase') {
+                document.getElementById('prompt-target').textContent = '请输入德语短语（整句）';
+            } else {
+                document.getElementById('prompt-target').textContent = '请输入德语（含冠词）';
+            }
         }
 
-        function getCorrectAnswer() {
-            const word = getCurrentWord();
-            switch(currentStage) {
+        function getAnswerForStage(word, stage) {
+            word = normalizeWord(word);
+            switch (stage) {
                 case 1: return word.infinitiv;
                 case 2: return word.person3;
                 case 3: return word.prateritum;
                 case 4: return word.perfekt;
+                default: return word.infinitiv;
             }
+        }
+
+        function getSynonymForStage(word, stage) {
+            word = normalizeWord(word);
+            switch (stage) {
+                case 1: return word.synInfinitiv;
+                case 2: return word.synPerson3;
+                case 3: return word.synPrateritum;
+                case 4: return word.synPerfekt;
+                default: return '';
+            }
+        }
+
+        function getStageAnswers(word, stage) {
+            const answers = [getAnswerForStage(word, stage)];
+            const syn = getSynonymForStage(word, stage);
+            if (syn) answers.push(syn);
+            return answers.filter(a => a);
+        }
+
+        function formatStageAnswerDisplay(word, stage) {
+            const answers = getStageAnswers(word, stage).map(a => normalizeAnswer(a));
+            return [...new Set(answers)].join(' / ');
+        }
+
+        function formatWrongItemDetail(w) {
+            w = normalizeWord(w);
+            if (w.type !== 'verb') return escapeHtml(w.infinitiv);
+            let detail = `${w.person3} · ${w.prateritum} · ${w.perfekt}`;
+            if (w.synInfinitiv) {
+                detail += ` （近义：${w.synPerson3} · ${w.synPrateritum} · ${w.synPerfekt}）`;
+            }
+            return escapeHtml(detail);
         }
 
         function normalizeAnswer(s) {
@@ -1334,12 +1459,18 @@
                 .replace(/\s+/g, ' ');
         }
 
-        function answersMatch(userInput, correctAnswer) {
+        function answersMatchOne(userInput, correctAnswer) {
             const normalizedInput = normalizeAnswer(userInput);
+            if (!correctAnswer) return false;
             if (correctAnswer.includes('/')) {
                 return correctAnswer.split('/').some(alt => normalizeAnswer(alt) === normalizedInput);
             }
             return normalizedInput === normalizeAnswer(correctAnswer);
+        }
+
+        function answersMatch(userInput, correctAnswers) {
+            const list = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
+            return list.some(a => answersMatchOne(userInput, a));
         }
 
         function updateHUD() {
@@ -1352,12 +1483,14 @@
         }
 
         function updateMonsterHP() {
-            const pct = (monsterHP / 4) * 100;
+            const maxHP = getStageCount(getCurrentWord());
+            const pct = maxHP > 0 ? (monsterHP / maxHP) * 100 : 0;
             document.getElementById('monster-hp-fill').style.width = pct + '%';
             document.getElementById('monster-hp-num').textContent = monsterHP;
+            document.getElementById('monster-hp-max').textContent = maxHP;
 
-            const emojis = ['👾', '👹', '👺', '💀'];
-            document.getElementById('monster').textContent = emojis[4 - monsterHP] || '💀';
+            const emojis = maxHP === 1 ? ['👾'] : ['👾', '👹', '👺', '💀'];
+            document.getElementById('monster').textContent = emojis[maxHP - monsterHP] || '💀';
         }
 
         function shakeScreen() {
@@ -1374,8 +1507,8 @@
 
             if (!value || input.disabled) return;
 
-            const correctAnswer = getCorrectAnswer();
-            const isCorrect = answersMatch(value, correctAnswer);
+            const stageAnswers = getStageAnswers(word, currentStage);
+            const isCorrect = answersMatch(value, stageAnswers);
 
             if (isCorrect) {
                 correctCount++;
@@ -1426,7 +1559,7 @@
                     currentWordSession.hadSkip = true;
                     addToWrongWords(word);
 
-                    showFeedback(`❌ 答案：${normalizeAnswer(correctAnswer)}<br>跳过该阶段`, 'skip');
+                    showFeedback(`❌ 答案：${formatStageAnswerDisplay(word, currentStage)}<br>跳过该阶段`, 'skip');
 
                     input.disabled = true;
 
@@ -1496,7 +1629,7 @@
                 title.textContent = '全部掌握！';
                 title.style.color = '#c9a227';
                 desc.textContent = round > 1
-                    ? `第 ${round} 轮完成，所有词四阶段均答对！`
+                    ? `第 ${round} 轮完成，所有词条均已掌握！`
                     : '太棒了！整张词表已掌握！';
                 replayBtn.textContent = '🔄 再练一遍全表';
             } else if (hpPct >= 75) {
@@ -1518,9 +1651,10 @@
                 const content = document.getElementById('wrong-list-content');
                 content.innerHTML = '';
                 wrongWords.forEach(w => {
+                    const nw = normalizeWord(w);
                     const div = document.createElement('div');
                     div.className = 'wrong-item';
-                    div.innerHTML = `<strong>${escapeHtml(w.infinitiv)}</strong> · ${escapeHtml(w.english)}<br><span class="correct-answer">${escapeHtml(w.person3)} · ${escapeHtml(w.prateritum)} · ${escapeHtml(w.perfekt)}</span>`;
+                    div.innerHTML = `<span class="type-tag ${nw.type}">${TYPE_LABELS[nw.type]}</span><strong>${escapeHtml(getWordDisplayDe(nw))}</strong> · ${escapeHtml(nw.english)}<br><span class="correct-answer">${formatWrongItemDetail(nw)}</span>`;
                     content.appendChild(div);
                 });
             } else {

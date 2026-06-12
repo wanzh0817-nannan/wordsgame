@@ -1,6 +1,6 @@
-# 德语动词 · 考前突击
+# 德语词汇 · 考前突击
 
-浏览器里的德语动词背诵小游戏。粘贴词表即可开练，支持错题 + 抽查多轮复习，词表保存在本机浏览器。
+浏览器里的德语词汇背诵小游戏。支持名词、动词、短语混合词表；动词四形态，词汇/短语一题过关。粘贴即可开练，支持错题 + 抽查多轮复习，词表保存在本机浏览器。
 
 ## 本地使用
 
@@ -20,13 +20,28 @@
 
 ## 词表格式
 
-每行一个词，用 `|` 分隔五列：
+每行一条，用 `|` 分隔。推荐带类型前缀：
 
 ```
-English释义|Infinitiv|3. Person|Präteritum|Perfekt
+类型|English|德语|3.Person|Präteritum|Perfekt|同义原形|同义3.Person|同义Prät.|同义Perf.
 ```
+
+| 类型 | 说明 | 阶段数 |
+|------|------|--------|
+| `word` | 名词/形容词/副词等，德语须含冠词 | 1 |
+| `phrase` | 动词短语，考整句 | 1 |
+| `verb` | 动词，考四形态；后四列可填近义词变位 | 4 |
 
 示例：
+
+```
+word|the coin|die Münze
+phrase|to wipe the blackboard|die Tafel abwischen
+verb|to run|rennen|rennt|rannte|ist gerannt
+verb|to steal|stehlen|stiehlt|stahl|hat gestohlen|klauen|klaut|klaute|hat geklaut
+```
+
+旧格式（无类型，视为动词）仍支持：
 
 ```
 to get, to receive|bekommen|bekommt|bekam|hat bekommen
@@ -37,5 +52,6 @@ to get, to receive|bekommen|bekommt|bekam|hat bekommen
 - **第 1 轮**：考整张词表。
 - **之后每轮**：未掌握的词必考 + 从已掌握词中抽查约 30%（至少 1 个）。
 - 抽查时若又答错（含跳过），该词会进入错题集。
-- 每个词须 **4 个阶段都答对且未跳过** 才算掌握。
+- 动词须 **4 阶段都答对且未跳过**；词汇/短语须 **1 题答对且未跳过** 才算掌握。
+- 动词可填近义词列（如 stehlen / klauen），任一写法算对。
 - 错题集清空即 **全部掌握**。
