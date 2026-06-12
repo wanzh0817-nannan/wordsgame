@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>德语词汇 · 考前突击</title>
+    <title>Deutsch · Prüfungsvorbereitung</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -553,6 +553,12 @@
             border-radius: 8px;
             margin-bottom: 6px;
             font-size: 0.85em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .saved-list-item:hover {
+            background: rgba(255,255,255,0.1);
         }
 
         .saved-list-item .list-info {
@@ -736,45 +742,45 @@
 </head>
 <body>
     <div id="start-screen" class="screen active">
-        <h1>🛡️ 德语词汇 · 考前突击</h1>
-        <p class="subtitle">粘贴明天要考的词汇，开一局就能背</p>
+        <h1>🛡️ Deutsch · Prüfungsvorbereitung</h1>
+        <p class="subtitle">Wörter einfügen und loslegen</p>
 
         <div id="resume-banner" class="resume-banner">
             <p id="resume-text"></p>
             <div class="resume-actions">
-                <button onclick="resumeSession()" class="btn-resume">继续练习</button>
-                <button onclick="discardSession()" class="btn-discard-session">放弃进度</button>
+                <button onclick="resumeSession()" class="btn-resume">Weiter üben</button>
+                <button onclick="discardSession()" class="btn-discard-session">Fortschritt verwerfen</button>
             </div>
         </div>
 
         <div class="saved-lists">
-            <h3>📁 已保存的单词表（存在本机浏览器）</h3>
+            <h3>📁 Gespeicherte Wortlisten <span style="font-weight:normal;color:#5a6078">(im Browser)</span></h3>
             <div id="saved-lists-container"></div>
         </div>
 
         <div class="batch-import">
-            <label>📋 批量导入（类型|English|德语|3.Person|Präteritum|Perfekt|同义原形|同义3.Person|同义Prät.|同义Perf.）</label>
-            <textarea id="batch-input" placeholder="word|the coin|die Münze&#10;phrase|to wipe the blackboard|die Tafel abwischen&#10;verb|to run|rennen|rennt|rannte|ist gerannt&#10;verb|to steal|stehlen|stiehlt|stahl|hat gestohlen|klauen|klaut|klaute|hat geklaut&#10;&#10;旧格式（无类型）仍支持：English|Infinitiv|3.Person|Präteritum|Perfekt"></textarea>
-            <button onclick="batchImport()" class="btn-batch">📥 导入</button>
+            <label>📋 Import (Typ|English|Deutsch|3.Person|Präteritum|Perfekt|Synonym…)</label>
+            <textarea id="batch-input" placeholder="word|the coin|die Münze&#10;phrase|to wipe the blackboard|die Tafel abwischen&#10;verb|to run|rennen|rennt|rannte|ist gerannt&#10;verb|to steal|stehlen|stiehlt|stahl|hat gestohlen|klauen|klaut|klaute|hat geklaut"></textarea>
+            <button onclick="batchImport()" class="btn-batch">📥 Importieren</button>
         </div>
 
-        <div class="divider">— 已添加的单词 —</div>
+        <div class="divider">— Hinzugefügte Wörter —</div>
 
         <div id="word-list" class="word-list"></div>
-        <div class="word-count">已添加 <span id="word-count-num">0</span> 个单词 · 总血量: <span id="total-hp">0</span></div>
+        <div class="word-count"><span id="word-count-num">0</span> Wörter · Leben gesamt: <span id="total-hp">0</span></div>
 
         <button id="btn-start" onclick="startGame()" class="btn-start" disabled>
-            ⚔️ 开始战斗
+            ⚔️ Kampf starten
         </button>
-        <button onclick="clearAll()" class="btn-clear">🗑️ 清空全部</button>
-        <p class="storage-hint">词表与练习进度保存在本机浏览器，换设备需重新加载词表</p>
+        <button onclick="clearAll()" class="btn-clear">🗑️ Alles löschen</button>
+        <p class="storage-hint">Wortlisten und Fortschritt werden lokal im Browser gespeichert.</p>
     </div>
 
     <div id="game-screen" class="screen">
         <div id="round-info" class="round-info"></div>
         <div class="hud">
             <div class="hp-bar-container">
-                <div class="hp-label">❤️ 玩家生命</div>
+                <div class="hp-label">❤️ Leben</div>
                 <div class="hp-track">
                     <div id="player-hp-fill" class="hp-fill" style="width: 100%"></div>
                 </div>
@@ -782,7 +788,7 @@
             </div>
             <div class="progress">
                 <div class="current"><span id="current-word">1</span><span class="total">/<span id="total-word">0</span></span></div>
-                <div style="color:#8b92a8;font-size:0.8em">当前单词</div>
+                <div style="color:#8b92a8;font-size:0.8em">Aktuelles Wort</div>
             </div>
         </div>
 
@@ -791,18 +797,18 @@
             <div class="monster-hp">
                 <div id="monster-hp-fill" class="monster-hp-fill" style="width: 100%"></div>
             </div>
-            <div class="monster-hp-text">妖怪 HP: <span id="monster-hp-num">4</span>/<span id="monster-hp-max">4</span></div>
+            <div class="monster-hp-text">Monster LP: <span id="monster-hp-num">4</span>/<span id="monster-hp-max">4</span></div>
         </div>
 
         <div class="prompt-area">
-            <div class="stage-badge" id="stage-badge">阶段 1/4</div>
-            <div class="prompt-label">English Meaning</div>
+            <div class="stage-badge" id="stage-badge">Stufe 1/4</div>
+            <div class="prompt-label">Englische Bedeutung</div>
             <div class="prompt-value" id="prompt-value">-</div>
-            <div class="prompt-target" id="prompt-target">请输入 Infinitiv</div>
+            <div class="prompt-target" id="prompt-target">Infinitiv eingeben</div>
         </div>
 
         <div class="input-area">
-            <input type="text" id="answer-input" placeholder="输入答案..." autocomplete="off" />
+            <input type="text" id="answer-input" placeholder="Antwort eingeben…" autocomplete="off" />
             <button onclick="submitAnswer()" class="btn-attack">⚔️</button>
         </div>
 
@@ -817,44 +823,44 @@
 
             <div class="stats-box">
                 <div class="stat-row">
-                    <span class="stat-label">总题数</span>
+                    <span class="stat-label">Fragen gesamt</span>
                     <span class="stat-value" id="stat-total">0</span>
                 </div>
                 <div class="stat-row">
-                    <span class="stat-label">答对</span>
+                    <span class="stat-label">Richtig</span>
                     <span class="stat-value good" id="stat-correct">0</span>
                 </div>
                 <div class="stat-row">
-                    <span class="stat-label">跳过/答错</span>
+                    <span class="stat-label">Falsch / Übersprungen</span>
                     <span class="stat-value bad" id="stat-wrong">0</span>
                 </div>
                 <div class="stat-row">
-                    <span class="stat-label">剩余血量</span>
+                    <span class="stat-label">Leben übrig</span>
                     <span class="stat-value" id="stat-hp">0%</span>
                 </div>
             </div>
 
             <div id="wrong-words" class="wrong-list" style="display:none">
-                <h3>📚 未掌握的词（下轮必考）</h3>
+                <h3>📚 Noch nicht gemeistert (nächste Runde Pflicht)</h3>
                 <div id="wrong-list-content"></div>
             </div>
 
             <div class="result-buttons">
-                <button id="btn-replay" onclick="replayGame()" class="btn-replay">🔄 再玩一次</button>
-                <button onclick="backToStart()" class="btn-new">🏠 重新输入单词</button>
+                <button id="btn-replay" onclick="replayGame()" class="btn-replay">🔄 Noch einmal</button>
+                <button onclick="backToStart()" class="btn-new">🏠 Neue Wortliste</button>
             </div>
         </div>
     </div>
 
     <div id="save-modal" class="modal-overlay">
         <div class="modal-box">
-            <h3>💾 保存单词表</h3>
-            <p id="save-modal-desc">当前词表尚未保存，起个名字方便以后加载复测。</p>
-            <input type="text" id="save-list-name" placeholder="例如：6月10日动词" maxlength="40" />
+            <h3>💾 Wortliste speichern</h3>
+            <p id="save-modal-desc">Die aktuelle Liste ist noch nicht gespeichert. Gib ihr einen Namen.</p>
+            <input type="text" id="save-list-name" placeholder="z. B. Verben Juni" maxlength="40" />
             <div class="modal-buttons">
-                <button onclick="confirmSaveAndLeave()" class="btn-modal-primary">保存并返回</button>
-                <button onclick="leaveWithoutSave()" class="btn-modal-secondary">不保存</button>
-                <button onclick="closeSaveModal()" class="btn-modal-cancel">取消</button>
+                <button onclick="confirmSaveAndLeave()" class="btn-modal-primary">Speichern und zurück</button>
+                <button onclick="leaveWithoutSave()" class="btn-modal-secondary">Nicht speichern</button>
+                <button onclick="closeSaveModal()" class="btn-modal-cancel">Abbrechen</button>
             </div>
         </div>
     </div>
@@ -881,7 +887,8 @@
         let dirty = false;
 
         const WORD_TYPES = ['word', 'verb', 'phrase'];
-        const TYPE_LABELS = { word: '词汇', verb: '动词', phrase: '短语' };
+        const TYPE_LABELS = { word: 'Wort', verb: 'Verb', phrase: 'Phrase' };
+        const SUBTITLE_BASE = 'Wörter einfügen und loslegen';
 
         function normalizeWord(w) {
             return {
@@ -1028,10 +1035,10 @@
             const wrongN = wrongWords.length;
             if (round > 1 || wrongN > 0) {
                 banner.style.display = 'block';
-                const namePart = listId ? `「${listId}」` : '当前词表';
+                const namePart = listId ? `„${listId}"` : 'Aktuelle Liste';
                 text.textContent = wrongN > 0
-                    ? `${namePart}：第 ${round} 轮，还有 ${wrongN} 个词未掌握。`
-                    : `${namePart}：上次已全部掌握，可再练一遍。`;
+                    ? `${namePart}: Runde ${round}, noch ${wrongN} Wörter nicht gemeistert.`
+                    : `${namePart}: Alles gemeistert – noch einmal üben?`;
             } else {
                 banner.style.display = 'none';
             }
@@ -1046,7 +1053,7 @@
         }
 
         function discardSession() {
-            if (!confirm('确定放弃当前练习进度？词表内容会保留。')) return;
+            if (!confirm('Fortschritt wirklich verwerfen? Die Wortliste bleibt erhalten.')) return;
             wrongWords = [];
             round = 1;
             saveSession();
@@ -1058,7 +1065,7 @@
             const lists = getLists();
             const names = Object.keys(lists).sort((a, b) => (lists[b].lastPlayed || '').localeCompare(lists[a].lastPlayed || ''));
             if (names.length === 0) {
-                container.innerHTML = '<div class="saved-lists-empty">暂无保存的词表</div>';
+                container.innerHTML = '<div class="saved-lists-empty">Keine gespeicherten Listen</div>';
                 return;
             }
             container.innerHTML = '';
@@ -1066,20 +1073,20 @@
                 const item = lists[name];
                 const div = document.createElement('div');
                 div.className = 'saved-list-item';
+                div.title = 'Klicken zum Starten';
+                div.onclick = () => loadWordListAndStart(name);
                 const info = document.createElement('span');
                 info.className = 'list-info';
-                info.innerHTML = `<strong>${escapeHtml(name)}</strong> · ${item.words.length} 个词${item.lastPlayed ? ' · ' + item.lastPlayed : ''}`;
+                info.innerHTML = `<strong>${escapeHtml(name)}</strong> · ${item.words.length} Wörter${item.lastPlayed ? ' · ' + item.lastPlayed : ''}`;
                 const actions = document.createElement('div');
                 actions.className = 'saved-list-actions';
-                const loadBtn = document.createElement('button');
-                loadBtn.className = 'btn-load';
-                loadBtn.textContent = '加载';
-                loadBtn.onclick = () => loadWordList(name);
                 const delBtn = document.createElement('button');
                 delBtn.className = 'btn-delete-list';
-                delBtn.textContent = '删除';
-                delBtn.onclick = () => deleteWordList(name);
-                actions.appendChild(loadBtn);
+                delBtn.textContent = 'Löschen';
+                delBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteWordList(name);
+                };
                 actions.appendChild(delBtn);
                 div.appendChild(info);
                 div.appendChild(actions);
@@ -1114,7 +1121,7 @@
         function loadWordList(name) {
             const lists = getLists();
             const item = lists[name];
-            if (!item) return;
+            if (!item) return false;
             wordData = item.words.map(w => normalizeWord(w));
             wrongWords = [];
             round = 1;
@@ -1124,10 +1131,17 @@
             setLists(lists);
             updateWordList();
             saveSession();
+            return true;
+        }
+
+        function loadWordListAndStart(name) {
+            if (loadWordList(name) && wordData.length > 0) {
+                startGameFresh();
+            }
         }
 
         function deleteWordList(name) {
-            if (!confirm(`确定删除词表「${name}」？`)) return;
+            if (!confirm(`Wortliste „${name}" wirklich löschen?`)) return;
             const lists = getLists();
             delete lists[name];
             setLists(lists);
@@ -1155,11 +1169,11 @@
         function confirmSaveAndLeave() {
             const name = document.getElementById('save-list-name').value.trim();
             if (!name) {
-                alert('请输入词表名称');
+                alert('Bitte einen Namen eingeben.');
                 return;
             }
             const lists = getLists();
-            if (lists[name] && name !== listId && !confirm(`词表「${name}」已存在，是否覆盖？`)) return;
+            if (lists[name] && name !== listId && !confirm(`„${name}" existiert bereits. Überschreiben?`)) return;
             saveWordList(name);
             closeSaveModal();
             resetEditorState();
@@ -1228,7 +1242,7 @@
                 item.className = 'word-item';
                 item.innerHTML = `
                     <span class="word-info"><span class="type-tag ${nw.type}">${TYPE_LABELS[nw.type]}</span><strong>${escapeHtml(getWordDisplayDe(nw))}</strong> · ${escapeHtml(nw.english)}</span>
-                    <button onclick="removeWord(${i})">删除</button>
+                    <button onclick="removeWord(${i})">Löschen</button>
                 `;
                 list.appendChild(item);
             });
@@ -1238,9 +1252,9 @@
             document.getElementById('total-hp').textContent = totalHP;
             document.getElementById('btn-start').disabled = wordData.length === 0;
 
-            const titleExtra = listId ? ` · ${listId}` : (dirty ? ' · 未保存' : '');
+            const titleExtra = listId ? ` · ${listId}` : (dirty ? ' · nicht gespeichert' : '');
             document.querySelector('#start-screen .subtitle').textContent =
-                '粘贴明天要考的词汇，开一局就能背' + (wordData.length ? titleExtra : '');
+                SUBTITLE_BASE + (wordData.length ? titleExtra : '');
         }
 
         function removeWord(i) {
@@ -1250,7 +1264,7 @@
         }
 
         function clearAll() {
-            if (wordData.length && !confirm('确定清空当前词表？')) return;
+            if (wordData.length && !confirm('Aktuelle Wortliste wirklich leeren?')) return;
             resetEditorState();
         }
 
@@ -1298,10 +1312,10 @@
         function updateRoundInfo() {
             const el = document.getElementById('round-info');
             if (round <= 1) {
-                el.textContent = `第 1 轮 · 全表 ${roundWordList.length} 个词`;
+                el.textContent = `Runde 1 · gesamte Liste (${roundWordList.length} Wörter)`;
             } else {
                 const wrongN = wrongWords.length;
-                el.textContent = `第 ${round} 轮 · 错题 ${wrongN} 个 + 抽查 ${roundSpotCount} 个 · 共 ${roundWordList.length} 个词`;
+                el.textContent = `Runde ${round} · ${wrongN} Fehler + ${roundSpotCount} Stichprobe · ${roundWordList.length} Wörter`;
             }
         }
 
@@ -1393,18 +1407,18 @@
             const word = normalizeWord(getCurrentWord());
             const maxStage = getStageCount(word);
 
-            document.getElementById('stage-badge').textContent = `阶段 ${currentStage}/${maxStage}`;
+            document.getElementById('stage-badge').textContent = `Stufe ${currentStage}/${maxStage}`;
             document.getElementById('prompt-value').textContent = word.english;
 
             if (word.type === 'verb') {
                 const targets = ['Infinitiv', '3. Person Singular', 'Präteritum', 'Perfekt'];
-                let hint = `请输入 ${targets[currentStage - 1]}`;
-                if (word.synInfinitiv) hint += '（可答近义词）';
+                let hint = `${targets[currentStage - 1]} eingeben`;
+                if (word.synInfinitiv) hint += ' (Synonym möglich)';
                 document.getElementById('prompt-target').textContent = hint;
             } else if (word.type === 'phrase') {
-                document.getElementById('prompt-target').textContent = '请输入德语短语（整句）';
+                document.getElementById('prompt-target').textContent = 'Deutsche Phrase eingeben (ganzer Satz)';
             } else {
-                document.getElementById('prompt-target').textContent = '请输入德语（含冠词）';
+                document.getElementById('prompt-target').textContent = 'Deutsch eingeben (mit Artikel)';
             }
         }
 
@@ -1447,7 +1461,7 @@
             if (w.type !== 'verb') return escapeHtml(w.infinitiv);
             let detail = `${w.person3} · ${w.prateritum} · ${w.perfekt}`;
             if (w.synInfinitiv) {
-                detail += ` （近义：${w.synPerson3} · ${w.synPrateritum} · ${w.synPerfekt}）`;
+                detail += ` (Syn.: ${w.synPerson3} · ${w.synPrateritum} · ${w.synPerfekt})`;
             }
             return escapeHtml(detail);
         }
@@ -1515,7 +1529,7 @@
                 monsterHP--;
                 currentWrongAttempts = 0;
 
-                showFeedback('✅ 命中！', 'correct');
+                showFeedback('✅ Treffer!', 'correct');
 
                 const monster = document.getElementById('monster');
                 monster.classList.remove('idle');
@@ -1559,7 +1573,7 @@
                     currentWordSession.hadSkip = true;
                     addToWrongWords(word);
 
-                    showFeedback(`❌ 答案：${formatStageAnswerDisplay(word, currentStage)}<br>跳过该阶段`, 'skip');
+                    showFeedback(`❌ Antwort: ${formatStageAnswerDisplay(word, currentStage)}<br>Stufe übersprungen`, 'skip');
 
                     input.disabled = true;
 
@@ -1626,24 +1640,24 @@
 
             if (allMastered) {
                 badge.innerHTML = '🏆';
-                title.textContent = '全部掌握！';
+                title.textContent = 'Alles gemeistert!';
                 title.style.color = '#c9a227';
                 desc.textContent = round > 1
-                    ? `第 ${round} 轮完成，所有词条均已掌握！`
-                    : '太棒了！整张词表已掌握！';
-                replayBtn.textContent = '🔄 再练一遍全表';
+                    ? `Runde ${round} geschafft – alle Wörter gemeistert!`
+                    : 'Super! Die ganze Liste ist gemeistert!';
+                replayBtn.textContent = '🔄 Ganze Liste noch einmal';
             } else if (hpPct >= 75) {
                 badge.innerHTML = '🥈';
-                title.textContent = '继续加油';
+                title.textContent = 'Weiter so!';
                 title.style.color = '#c0c0c0';
-                desc.textContent = `第 ${round} 轮结束，还有 ${wrongWords.length} 个词未掌握。下轮：错题 + 约 30% 抽查。`;
-                replayBtn.textContent = `🔄 再玩一次（${wrongWords.length} 个错题 + 抽查）`;
+                desc.textContent = `Runde ${round} beendet. Noch ${wrongWords.length} Wörter offen. Nächste Runde: Fehler + ca. 30 % Stichprobe.`;
+                replayBtn.textContent = `🔄 Noch einmal (${wrongWords.length} Fehler + Stichprobe)`;
             } else {
                 badge.innerHTML = wrongWords.length > 3 ? '💔' : '🥉';
-                title.textContent = '还需努力';
+                title.textContent = 'Noch üben';
                 title.style.color = wrongWords.length > 3 ? '#ff4444' : '#cd7f32';
-                desc.textContent = `第 ${round} 轮结束，${wrongWords.length} 个词未掌握。下轮将考错题并抽查已掌握的词。`;
-                replayBtn.textContent = `🔄 再玩一次（${wrongWords.length} 个错题 + 抽查）`;
+                desc.textContent = `Runde ${round} beendet. ${wrongWords.length} Wörter noch nicht gemeistert.`;
+                replayBtn.textContent = `🔄 Noch einmal (${wrongWords.length} Fehler + Stichprobe)`;
             }
 
             if (wrongWords.length > 0) {
