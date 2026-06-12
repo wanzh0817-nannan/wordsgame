@@ -1,0 +1,32 @@
+{
+  "name": "2026-06-12 (27 Wörter)",
+  "words": [
+    { "type": "phrase", "english": "to wipe/clean the blackboard", "infinitiv": "die Tafel abwischen" },
+    { "type": "verb", "english": "to run", "infinitiv": "rennen", "person3": "rennt", "prateritum": "rannte", "perfekt": "ist gerannt" },
+    { "type": "word", "english": "therefore, that's why", "infinitiv": "deshalb" },
+    { "type": "word", "english": "quite, rather, pretty", "infinitiv": "ziemlich" },
+    { "type": "word", "english": "suddenly", "infinitiv": "plötzlich" },
+    { "type": "word", "english": "confidential, intimate", "infinitiv": "vertraulich" },
+    { "type": "word", "english": "the day before yesterday", "infinitiv": "vorgestern" },
+    { "type": "word", "english": "the printer cartridge", "infinitiv": "die Druckerpatrone" },
+    { "type": "verb", "english": "to arrange to meet, to make an appointment", "infinitiv": "verabreden", "person3": "verabredet", "prateritum": "verabredete", "perfekt": "hat verabredet" },
+    { "type": "word", "english": "funny, strange, weird", "infinitiv": "komisch" },
+    { "type": "word", "english": "perhaps, maybe", "infinitiv": "vielleicht" },
+    { "type": "word", "english": "the newspaper report", "infinitiv": "der Zeitungsbericht" },
+    { "type": "verb", "english": "to steal", "infinitiv": "stehlen", "person3": "stiehlt", "prateritum": "stahl", "perfekt": "hat gestohlen", "synInfinitiv": "klauen", "synPerson3": "klaut", "synPrateritum": "klaute", "synPerfekt": "hat geklaut" },
+    { "type": "word", "english": "the theft", "infinitiv": "der Diebstahl" },
+    { "type": "word", "english": "the coin", "infinitiv": "die Münze" },
+    { "type": "word", "english": "brand new", "infinitiv": "nagelneu" },
+    { "type": "word", "english": "suspicious", "infinitiv": "verdächtig" },
+    { "type": "word", "english": "the bowling club", "infinitiv": "der Kegelklub" },
+    { "type": "word", "english": "unbelievable, incredible", "infinitiv": "unglaublich" },
+    { "type": "word", "english": "the riddle, puzzle, mystery", "infinitiv": "das Rätsel" },
+    { "type": "word", "english": "the supervision, monitor", "infinitiv": "die Aufsicht" },
+    { "type": "verb", "english": "to report", "infinitiv": "berichten", "person3": "berichtet", "prateritum": "berichtete", "perfekt": "hat berichtet" },
+    { "type": "phrase", "english": "to clean the glasses", "infinitiv": "die Brille putzen" },
+    { "type": "word", "english": "crystal clear, as clear as glass", "infinitiv": "glasklar" },
+    { "type": "word", "english": "the possibility", "infinitiv": "die Möglichkeit" },
+    { "type": "word", "english": "dog-tired, exhausted", "infinitiv": "hundemüde" },
+    { "type": "word", "english": "innocent", "infinitiv": "unschuldig" }
+  ]
+}
