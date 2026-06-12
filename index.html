@@ -601,6 +601,51 @@
             padding: 8px 0;
         }
 
+        .shared-lists {
+            background: rgba(74, 222, 128, 0.06);
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .shared-lists h3 {
+            color: #4ade80;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .shared-list-item {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.06);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .shared-list-item:hover {
+            background: rgba(74, 222, 128, 0.12);
+        }
+
+        .shared-list-item .list-info {
+            color: #c0c4d0;
+            flex: 1;
+        }
+
+        .shared-list-item .list-info strong {
+            color: #fff;
+        }
+
+        .shared-list-item .list-action {
+            color: #4ade80;
+            font-size: 0.85em;
+            margin-left: 8px;
+        }
+
         .resume-banner {
             background: rgba(201, 162, 39, 0.12);
             border: 1px solid rgba(201, 162, 39, 0.35);
@@ -750,6 +795,13 @@
             <div class="resume-actions">
                 <button onclick="resumeSession()" class="btn-resume">Weiter üben</button>
                 <button onclick="discardSession()" class="btn-discard-session">Fortschritt verwerfen</button>
+            </div>
+        </div>
+
+        <div class="shared-lists">
+            <h3>📚 Geteilte Wortlisten</h3>
+            <div id="shared-lists-container">
+                <div class="saved-lists-empty">Wird geladen…</div>
             </div>
         </div>
 
@@ -1008,6 +1060,7 @@
         }
 
         function loadSessionOnStartup() {
+            if (new URLSearchParams(window.location.search).get('liste')) return;
             try {
                 const raw = localStorage.getItem(STORAGE_SESSION);
                 if (!raw) return;
@@ -1058,6 +1111,86 @@
             round = 1;
             saveSession();
             updateResumeBanner();
+        }
+
+        function isValidListId(id) {
+            return /^[a-zA-Z0-9_-]+$/.test(id);
+        }
+
+        async function fetchSharedListData(id) {
+            if (!isValidListId(id)) throw new Error('invalid id');
+            const res = await fetch(`lists/${id}.json`);
+            if (!res.ok) throw new Error('not found');
+            const data = await res.json();
+            const words = Array.isArray(data) ? data : data.words;
+            if (!words?.length) throw new Error('empty');
+            const name = Array.isArray(data) ? id : (data.name || id);
+            return { name, words: words.map(w => normalizeWord(w)) };
+        }
+
+        async function loadSharedList(id) {
+            try {
+                const data = await fetchSharedListData(id);
+                wordData = data.words;
+                wrongWords = [];
+                round = 1;
+                listId = data.name;
+                dirty = false;
+                updateWordList();
+                saveSession();
+                return true;
+            } catch {
+                return false;
+            }
+        }
+
+        async function loadSharedListAndStart(id) {
+            const ok = await loadSharedList(id);
+            if (ok && wordData.length > 0) {
+                startGameFresh();
+                return true;
+            }
+            alert('Wortliste konnte nicht geladen werden.');
+            return false;
+        }
+
+        async function renderSharedLists() {
+            const container = document.getElementById('shared-lists-container');
+            try {
+                const res = await fetch('lists/index.json');
+                if (!res.ok) throw new Error('index missing');
+                const catalog = await res.json();
+                if (!Array.isArray(catalog) || catalog.length === 0) {
+                    container.innerHTML = '<div class="saved-lists-empty">Noch keine geteilten Listen</div>';
+                    return;
+                }
+                container.innerHTML = '';
+                catalog.forEach(entry => {
+                    if (!entry.id || !isValidListId(entry.id)) return;
+                    const div = document.createElement('div');
+                    div.className = 'shared-list-item';
+                    div.title = 'Klicken zum Starten';
+                    div.onclick = () => loadSharedListAndStart(entry.id);
+                    const label = entry.label || entry.id;
+                    const countText = entry.count != null ? ` · ${entry.count} Wörter` : '';
+                    div.innerHTML = `
+                        <span class="list-info"><strong>${escapeHtml(label)}</strong>${countText}</span>
+                        <span class="list-action">⚔️ Start</span>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch {
+                container.innerHTML = '<div class="saved-lists-empty">Geteilte Listen nicht verfügbar</div>';
+            }
+        }
+
+        async function initSharedLists() {
+            await renderSharedLists();
+            const params = new URLSearchParams(window.location.search);
+            const sharedId = params.get('liste');
+            if (sharedId) {
+                await loadSharedListAndStart(sharedId);
+            }
         }
 
         function renderSavedLists() {
@@ -1709,6 +1842,7 @@
 
         renderSavedLists();
         loadSessionOnStartup();
+        initSharedLists();
     </script>
 </body>
 </html>
