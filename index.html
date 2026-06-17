@@ -8,9 +8,13 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #1a1f3c;
-            color: #f5f5f7;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a14;
+            background-image:
+                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 24px 24px;
+            color: #e0e6ff;
             min-height: 100vh;
             overflow-x: hidden;
         }
@@ -29,7 +33,8 @@
             text-align: center;
             font-size: 2em;
             margin: 30px 0 10px;
-            color: #c9a227;
+            color: #0ff;
+            text-shadow: 0 0 12px rgba(0, 255, 255, 0.6);
         }
 
         .subtitle {
@@ -148,14 +153,15 @@
         .btn-start {
             width: 100%;
             padding: 18px;
-            background: linear-gradient(135deg, #ff6b35, #ff8c5a);
-            border: none;
+            background: linear-gradient(135deg, #ff00aa, #7b2fff);
+            border: 1px solid #0ff;
             border-radius: 12px;
             color: white;
             font-size: 1.2em;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
+            box-shadow: 0 0 16px rgba(255, 0, 170, 0.35);
         }
 
         .btn-start:disabled {
@@ -208,9 +214,10 @@
 
         .hp-fill {
             height: 100%;
-            background: linear-gradient(90deg, #ff4444, #ff6b35, #c9a227, #4ade80);
+            background: linear-gradient(90deg, #ff0055, #ff00aa, #0ff, #00ff88);
             border-radius: 7px;
             transition: width 0.5s ease;
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
         }
 
         .hp-text {
@@ -777,8 +784,285 @@
             color: #8b92a8;
         }
 
+        #game-screen {
+            padding: 12px 16px 20px;
+            display: none;
+        }
+
+        #game-screen.active {
+            display: flex;
+            flex-direction: column;
+            max-width: 480px;
+        }
+
+        #game-screen .hud {
+            background: rgba(0, 255, 255, 0.06);
+            border: 1px solid rgba(0, 255, 255, 0.25);
+            box-shadow: 0 0 20px rgba(255, 0, 170, 0.15);
+        }
+
+        #game-screen .hp-label,
+        #game-screen .progress .total {
+            color: #7dd3fc;
+        }
+
+        .round-info {
+            text-align: center;
+            color: #f0abfc;
+            font-size: 0.85em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 8px rgba(240, 171, 252, 0.5);
+        }
+
+        .adventure-path-wrap {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 45vh;
+            max-height: 55vh;
+            margin: 12px 0;
+            padding: 8px 0;
+        }
+
+        .adventure-path {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            min-height: 100%;
+            justify-content: flex-end;
+        }
+
+        .path-segment {
+            width: 3px;
+            height: 28px;
+            background: linear-gradient(180deg, #0ff, #ff00aa);
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+            opacity: 0.7;
+        }
+
+        .path-segment.hidden { opacity: 0; height: 8px; }
+
+        .path-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(20, 20, 40, 0.8);
+            min-width: 120px;
+            transition: all 0.4s ease;
+        }
+
+        .path-node.goal {
+            border-color: #ffd700;
+            box-shadow: 0 0 16px rgba(255, 215, 0, 0.4);
+            font-size: 1.4em;
+        }
+
+        .path-node.start {
+            border-color: #0ff;
+            color: #0ff;
+            font-size: 0.85em;
+        }
+
+        .path-node.monster.active {
+            border-color: #ff00aa;
+            box-shadow: 0 0 24px rgba(255, 0, 170, 0.55);
+            transform: scale(1.05);
+        }
+
+        .path-node.monster.defeated {
+            opacity: 0;
+            transform: scale(0);
+            height: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            border: none;
+        }
+
+        .path-node .node-monster {
+            font-size: 2.2em;
+            filter: drop-shadow(0 0 12px rgba(255, 0, 170, 0.6));
+        }
+
+        .path-node .node-hero {
+            font-size: 1.6em;
+            margin-bottom: 4px;
+            filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.8));
+        }
+
+        .path-node .node-label {
+            font-size: 0.7em;
+            color: #94a3b8;
+            margin-top: 4px;
+            max-width: 140px;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        #battle-modal {
+            z-index: 200;
+        }
+
+        .cyber-battle {
+            background: rgba(10, 10, 25, 0.95);
+            border: 2px solid #0ff;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.35), inset 0 0 20px rgba(255, 0, 170, 0.08);
+            max-width: 360px;
+        }
+
+        .cyber-battle .stage-badge {
+            background: rgba(255, 0, 170, 0.2);
+            color: #f0abfc;
+            border-color: #ff00aa;
+        }
+
+        .cyber-battle .prompt-value {
+            color: #0ff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .cyber-battle .prompt-target {
+            color: #ff6ec7;
+        }
+
+        #battle-modal #answer-input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(0, 255, 255, 0.4);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        #battle-modal #answer-input:focus {
+            outline: none;
+            border-color: #ff00aa;
+            box-shadow: 0 0 12px rgba(255, 0, 170, 0.4);
+        }
+
+        .btn-attack-cyber {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #ff00aa, #7b2fff);
+            border: 1px solid #0ff;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .monster-hp-inline {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .monster-hp-inline-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0055, #ff00aa);
+            transition: width 0.3s;
+        }
+
+        #fail-screen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 300;
+            background: #0a0a14;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 24px;
+            text-align: center;
+        }
+
+        #fail-screen.active {
+            display: flex;
+        }
+
+        #fail-screen.lightning-flash {
+            animation: lightningFlash 0.15s 3;
+        }
+
+        @keyframes lightningFlash {
+            0%, 100% { background: #0a0a14; }
+            50% { background: #e8e8ff; }
+        }
+
+        .fail-bolt {
+            font-size: 5em;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 30px #0ff);
+        }
+
+        .fail-title {
+            font-size: 1.8em;
+            color: #ff0055;
+            text-shadow: 0 0 20px rgba(255, 0, 85, 0.8);
+            margin-bottom: 12px;
+        }
+
+        .fail-desc {
+            color: #94a3b8;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .d-badge {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 3.5em;
+            font-weight: 900;
+            font-family: Georgia, serif;
+            border: 4px solid;
+        }
+
+        .d-badge.diamond {
+            color: #fff;
+            background: linear-gradient(135deg, #0ff, #a855f7, #ff00aa);
+            border-color: #0ff;
+            box-shadow: 0 0 40px rgba(0, 255, 255, 0.8);
+        }
+
+        .d-badge.gold {
+            color: #1a1a2e;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            border-color: #ffd700;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+        }
+
+        .d-badge.silver {
+            color: #1a1a2e;
+            background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+            border-color: #cbd5e1;
+            box-shadow: 0 0 24px rgba(203, 213, 225, 0.5);
+        }
+
+        .d-badge.bronze {
+            color: #fff;
+            background: linear-gradient(135deg, #cd7f32, #8b4513);
+            border-color: #cd7f32;
+            box-shadow: 0 0 20px rgba(205, 127, 50, 0.5);
+        }
+
         @media (max-width: 480px) {
-            .monster { font-size: 70px; }
+            .path-node .node-monster { font-size: 1.8em; }
             .hud { flex-direction: column; gap: 10px; }
             .hp-bar-container { margin-right: 0; width: 100%; }
             .progress { text-align: center; }
@@ -819,7 +1103,7 @@
         <div class="divider">— Hinzugefügte Wörter —</div>
 
         <div id="word-list" class="word-list"></div>
-        <div class="word-count"><span id="word-count-num">0</span> Wörter · Leben gesamt: <span id="total-hp">0</span></div>
+        <div class="word-count"><span id="word-count-num">0</span> Wörter · <span id="total-questions">0</span> Fragen · Leben: <span id="total-hp">0</span></div>
 
         <button id="btn-start" onclick="startGame()" class="btn-start" disabled>
             ⚔️ Kampf starten
@@ -832,7 +1116,7 @@
         <div id="round-info" class="round-info"></div>
         <div class="hud">
             <div class="hp-bar-container">
-                <div class="hp-label">❤️ Leben</div>
+                <div class="hp-label">⚡ Leben</div>
                 <div class="hp-track">
                     <div id="player-hp-fill" class="hp-fill" style="width: 100%"></div>
                 </div>
@@ -840,31 +1124,38 @@
             </div>
             <div class="progress">
                 <div class="current"><span id="current-word">1</span><span class="total">/<span id="total-word">0</span></span></div>
-                <div style="color:#8b92a8;font-size:0.8em">Aktuelles Wort</div>
+                <div style="color:#7dd3fc;font-size:0.8em">Monster</div>
             </div>
         </div>
 
-        <div class="battle-area">
-            <div id="monster" class="monster idle">👾</div>
-            <div class="monster-hp">
-                <div id="monster-hp-fill" class="monster-hp-fill" style="width: 100%"></div>
-            </div>
-            <div class="monster-hp-text">Monster LP: <span id="monster-hp-num">4</span>/<span id="monster-hp-max">4</span></div>
+        <div class="adventure-path-wrap">
+            <div id="adventure-path" class="adventure-path"></div>
         </div>
+    </div>
 
-        <div class="prompt-area">
+    <div id="battle-modal" class="modal-overlay">
+        <div class="modal-box cyber-battle">
             <div class="stage-badge" id="stage-badge">Stufe 1/4</div>
             <div class="prompt-label">Englische Bedeutung</div>
             <div class="prompt-value" id="prompt-value">-</div>
             <div class="prompt-target" id="prompt-target">Infinitiv eingeben</div>
-        </div>
-
-        <div class="input-area">
+            <div class="monster-hp-inline">
+                <div id="monster-hp-fill" class="monster-hp-inline-fill" style="width: 100%"></div>
+            </div>
+            <div class="monster-hp-text" style="text-align:center;font-size:0.85em;color:#94a3b8;margin-bottom:12px">
+                Monster LP: <span id="monster-hp-num">4</span>/<span id="monster-hp-max">4</span>
+            </div>
             <input type="text" id="answer-input" placeholder="Antwort eingeben…" autocomplete="off" />
-            <button onclick="submitAnswer()" class="btn-attack">⚔️</button>
+            <button onclick="submitAnswer()" class="btn-attack-cyber">⚔️ ANGRIFF</button>
+            <div id="feedback" class="feedback hidden"></div>
         </div>
+    </div>
 
-        <div id="feedback" class="feedback hidden"></div>
+    <div id="fail-screen">
+        <div class="fail-bolt">⚡</div>
+        <h2 class="fail-title">GAME OVER</h2>
+        <p class="fail-desc" id="fail-desc">Zu viele Fehler – du wurdest vom Blitz getroffen!</p>
+        <button onclick="backFromFail()" class="btn-start" style="max-width:280px">🏠 Zurück</button>
     </div>
 
     <div id="result-screen" class="screen">
@@ -928,6 +1219,9 @@
         let currentStage = 1;
         let playerHP = 0;
         let playerHPTotal = 0;
+        let totalQuestionsThisRound = 0;
+        let defeatedIndices = new Set();
+        let anySkipThisRound = false;
         let monsterHP = 4;
         let correctCount = 0;
         let wrongCount = 0;
@@ -1013,6 +1307,12 @@
         function sumStageCount(words) {
             return words.reduce((sum, w) => sum + getStageCount(w), 0);
         }
+
+        function calcPlayerHP(totalQuestions) {
+            return Math.floor(totalQuestions / 2);
+        }
+
+        const PATH_MONSTERS = ['👾', '👹', '👺', '🤖', '👽', '🦾'];
 
         function shuffle(arr) {
             const a = [...arr];
@@ -1131,11 +1431,65 @@
             return window.location.origin + getAppBasePath() + 'lists/' + filename;
         }
 
+        const GITHUB_PAGES_LISTS_BASE = 'https://wanzh0817-nannan.github.io/wordsgame/lists/';
+
+        function listsRelativePath(filename) {
+            return 'lists/' + filename;
+        }
+
+        function xhrGetText(url) {
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.overrideMimeType('application/json');
+                xhr.open('GET', url, true);
+                xhr.onload = function () {
+                    if (xhr.status === 200 || xhr.status === 0) {
+                        resolve(xhr.responseText);
+                    } else {
+                        reject(new Error('xhr ' + xhr.status));
+                    }
+                };
+                xhr.onerror = () => reject(new Error('xhr error'));
+                xhr.send();
+            });
+        }
+
+        async function loadListsJson(filename) {
+            const errors = [];
+
+            if (window.location.protocol !== 'file:') {
+                try {
+                    const res = await fetch(listsAssetUrl(filename));
+                    if (res.ok) return await res.json();
+                    errors.push('fetch local: ' + res.status);
+                } catch (e) {
+                    errors.push('fetch local: ' + e.message);
+                }
+            }
+
+            if (window.location.protocol === 'file:') {
+                try {
+                    const text = await xhrGetText(listsRelativePath(filename));
+                    return JSON.parse(text);
+                } catch (e) {
+                    errors.push('xhr file: ' + e.message);
+                }
+            }
+
+            try {
+                const res = await fetch(GITHUB_PAGES_LISTS_BASE + filename);
+                if (res.ok) return await res.json();
+                errors.push('fetch github: ' + res.status);
+            } catch (e) {
+                errors.push('fetch github: ' + e.message);
+            }
+
+            throw new Error(errors.join('; '));
+        }
+
         async function fetchSharedListData(id) {
             if (!isValidListId(id)) throw new Error('invalid id');
-            const res = await fetch(listsAssetUrl(`${id}.json`));
-            if (!res.ok) throw new Error('not found');
-            const data = await res.json();
+            const data = await loadListsJson(`${id}.json`);
             const words = Array.isArray(data) ? data : data.words;
             if (!words?.length) throw new Error('empty');
             const name = Array.isArray(data) ? id : (data.name || id);
@@ -1171,9 +1525,7 @@
         async function renderSharedLists() {
             const container = document.getElementById('shared-lists-container');
             try {
-                const res = await fetch(listsAssetUrl('index.json'));
-                if (!res.ok) throw new Error('index missing');
-                const catalog = await res.json();
+                const catalog = await loadListsJson('index.json');
                 if (!Array.isArray(catalog) || catalog.length === 0) {
                     container.innerHTML = '<div class="saved-lists-empty">Noch keine geteilten Listen</div>';
                     return;
@@ -1194,7 +1546,7 @@
                     container.appendChild(div);
                 });
             } catch {
-                container.innerHTML = '<div class="saved-lists-empty">Geteilte Listen nicht verfügbar</div>';
+                container.innerHTML = '<div class="saved-lists-empty">Geteilte Listen nicht verfügbar<br><span style="font-size:0.85em">Tipp: Seite über GitHub Pages öffnen oder lists/ Ordner neben index.html ablegen</span></div>';
             }
         }
 
@@ -1347,6 +1699,8 @@
         function goToStartScreen() {
             document.getElementById('game-screen').classList.remove('active');
             document.getElementById('result-screen').classList.remove('active');
+            document.getElementById('fail-screen').classList.remove('active');
+            closeBattleModal();
             document.getElementById('start-screen').classList.add('active');
             saveSession();
         }
@@ -1394,9 +1748,10 @@
                 list.appendChild(item);
             });
 
-            const totalHP = sumStageCount(wordData);
+            const totalQ = sumStageCount(wordData);
             document.getElementById('word-count-num').textContent = wordData.length;
-            document.getElementById('total-hp').textContent = totalHP;
+            document.getElementById('total-questions').textContent = totalQ;
+            document.getElementById('total-hp').textContent = calcPlayerHP(totalQ);
             document.getElementById('btn-start').disabled = wordData.length === 0;
 
             const titleExtra = listId ? ` · ${listId}` : (dirty ? ' · nicht gespeichert' : '');
@@ -1485,15 +1840,21 @@
             currentWordIndex = 0;
             correctCount = 0;
             wrongCount = 0;
-            playerHPTotal = sumStageCount(roundWordList);
+            totalQuestionsThisRound = sumStageCount(roundWordList);
+            playerHPTotal = calcPlayerHP(totalQuestionsThisRound);
             playerHP = playerHPTotal;
+            defeatedIndices = new Set();
+            anySkipThisRound = false;
 
             document.getElementById('start-screen').classList.remove('active');
             document.getElementById('result-screen').classList.remove('active');
+            document.getElementById('fail-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
+            closeBattleModal();
 
             updateRoundInfo();
             updateHUD();
+            renderAdventurePath();
             loadWord(0);
             saveSession();
 
@@ -1517,11 +1878,70 @@
             saveSession();
         }
 
+        function openBattleModal() {
+            document.getElementById('battle-modal').classList.add('active');
+        }
+
+        function closeBattleModal() {
+            document.getElementById('battle-modal').classList.remove('active');
+        }
+
+        function renderAdventurePath() {
+            const path = document.getElementById('adventure-path');
+            path.innerHTML = '';
+            const frag = document.createDocumentFragment();
+
+            const goal = document.createElement('div');
+            goal.className = 'path-node goal';
+            goal.innerHTML = '🏁<div class="node-label">Ziel · D</div>';
+            frag.appendChild(goal);
+
+            for (let i = roundWordList.length - 1; i >= 0; i--) {
+                const seg = document.createElement('div');
+                seg.className = 'path-segment' + (defeatedIndices.has(i) ? ' hidden' : '');
+                frag.appendChild(seg);
+
+                const word = normalizeWord(roundWordList[i]);
+                const defeated = defeatedIndices.has(i);
+                const active = i === currentWordIndex && !defeated;
+                const node = document.createElement('div');
+                node.className = 'path-node monster' + (defeated ? ' defeated' : '') + (active ? ' active' : '');
+                node.dataset.index = String(i);
+
+                const monsterEmoji = PATH_MONSTERS[i % PATH_MONSTERS.length];
+                let inner = '';
+                if (active) inner += '<div class="node-hero">🧑‍🚀</div>';
+                if (!defeated) inner += `<div class="node-monster">${monsterEmoji}</div>`;
+                inner += `<div class="node-label">${escapeHtml(word.english)}</div>`;
+                node.innerHTML = inner;
+                frag.appendChild(node);
+            }
+
+            const startSeg = document.createElement('div');
+            startSeg.className = 'path-segment';
+            frag.appendChild(startSeg);
+
+            const start = document.createElement('div');
+            start.className = 'path-node start';
+            start.innerHTML = '📍<div class="node-label">Start</div>';
+            frag.appendChild(start);
+
+            path.appendChild(frag);
+
+            requestAnimationFrame(() => {
+                const activeNode = path.querySelector('.path-node.monster.active');
+                if (activeNode) {
+                    activeNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        }
+
         function advanceToNextWord() {
             if (currentWordIndex + 1 < roundWordList.length) {
                 loadWord(currentWordIndex + 1);
                 updateHUD();
             } else {
+                closeBattleModal();
                 endGame();
             }
         }
@@ -1533,20 +1953,16 @@
             currentWrongAttempts = 0;
             currentWordSession = { hadSkip: false };
 
-            const monster = document.getElementById('monster');
-            monster.className = 'monster idle';
-            monster.style.opacity = '1';
-            monster.style.transform = 'scale(1)';
-
+            renderAdventurePath();
             updateMonsterHP();
             updatePrompt();
+            openBattleModal();
 
             const input = document.getElementById('answer-input');
             input.value = '';
             input.disabled = false;
             input.classList.remove('error');
             input.focus();
-
             hideFeedback();
         }
 
@@ -1649,9 +2065,6 @@
             document.getElementById('monster-hp-fill').style.width = pct + '%';
             document.getElementById('monster-hp-num').textContent = monsterHP;
             document.getElementById('monster-hp-max').textContent = maxHP;
-
-            const emojis = maxHP === 1 ? ['👾'] : ['👾', '👹', '👺', '💀'];
-            document.getElementById('monster').textContent = emojis[maxHP - monsterHP] || '💀';
         }
 
         function shakeScreen() {
@@ -1659,6 +2072,40 @@
             setTimeout(() => {
                 document.body.style.animation = '';
             }, 400);
+        }
+
+        function triggerFailScreen() {
+            closeBattleModal();
+            document.getElementById('game-screen').classList.remove('active');
+            const fail = document.getElementById('fail-screen');
+            fail.classList.add('active', 'lightning-flash');
+            setTimeout(() => fail.classList.remove('lightning-flash'), 600);
+            document.getElementById('fail-desc').textContent =
+                `Leben aufgebraucht (${wrongCount} Fehler). Du wurdest vom Blitz getroffen!`;
+            saveSession();
+        }
+
+        function backFromFail() {
+            document.getElementById('fail-screen').classList.remove('active');
+            goToStartScreen();
+        }
+
+        function checkPlayerDeath() {
+            if (playerHP <= 0) {
+                setTimeout(() => triggerFailScreen(), 800);
+                return true;
+            }
+            return false;
+        }
+
+        function onMonsterDefeated() {
+            defeatedIndices.add(currentWordIndex);
+            renderAdventurePath();
+            closeBattleModal();
+            setTimeout(() => {
+                finishCurrentWord();
+                advanceToNextWord();
+            }, 700);
         }
 
         function submitAnswer() {
@@ -1677,24 +2124,10 @@
                 currentWrongAttempts = 0;
 
                 showFeedback('✅ Treffer!', 'correct');
-
-                const monster = document.getElementById('monster');
-                monster.classList.remove('idle');
-                monster.classList.add('hit');
-                setTimeout(() => monster.classList.remove('hit'), 400);
-
                 updateMonsterHP();
 
                 if (monsterHP <= 0) {
-                    setTimeout(() => {
-                        monster.classList.remove('hit');
-                        monster.classList.add('dead');
-
-                        setTimeout(() => {
-                            finishCurrentWord();
-                            advanceToNextWord();
-                        }, 800);
-                    }, 400);
+                    setTimeout(() => onMonsterDefeated(), 500);
                 } else {
                     setTimeout(() => {
                         currentStage++;
@@ -1711,31 +2144,30 @@
                 wrongCount++;
 
                 shakeScreen();
+                showFeedback('❌ Falsch!', 'wrong');
 
                 input.classList.add('error');
                 setTimeout(() => input.classList.remove('error'), 400);
 
+                updateHUD();
+                saveSession();
+
+                if (checkPlayerDeath()) return;
+
                 if (currentWrongAttempts >= 2) {
                     monsterHP--;
                     currentWordSession.hadSkip = true;
+                    anySkipThisRound = true;
                     addToWrongWords(word);
 
                     showFeedback(`❌ Antwort: ${formatStageAnswerDisplay(word, currentStage)}<br>Stufe übersprungen`, 'skip');
-
+                    updateMonsterHP();
                     input.disabled = true;
 
                     setTimeout(() => {
                         input.disabled = false;
-
                         if (monsterHP <= 0) {
-                            const monster = document.getElementById('monster');
-                            monster.classList.remove('idle');
-                            monster.classList.add('dead');
-
-                            setTimeout(() => {
-                                finishCurrentWord();
-                                advanceToNextWord();
-                            }, 800);
+                            onMonsterDefeated();
                         } else {
                             currentStage++;
                             updatePrompt();
@@ -1747,13 +2179,8 @@
 
                 } else {
                     input.value = '';
-                    setTimeout(() => {
-                        input.focus();
-                    }, 300);
+                    setTimeout(() => input.focus(), 300);
                 }
-
-                updateHUD();
-                saveSession();
             }
         }
 
@@ -1768,41 +2195,69 @@
             fb.className = 'feedback hidden';
         }
 
+        function getDBadgeTier() {
+            const hpPct = playerHPTotal > 0 ? (playerHP / playerHPTotal) * 100 : 0;
+            const perfect = playerHP === playerHPTotal && wrongCount === 0 && !anySkipThisRound;
+            if (perfect) return 'diamond';
+            if (hpPct >= 90) return 'gold';
+            if (hpPct >= 70) return 'silver';
+            return 'bronze';
+        }
+
+        const D_BADGE_LABELS = {
+            diamond: '💎 Diamant-D · perfekt!',
+            gold: '🥇 Gold-D · Leben ≥ 90%',
+            silver: '🥈 Silber-D',
+            bronze: '🥉 Bronze-D'
+        };
+
+        function renderDBadge(tier) {
+            const badge = document.getElementById('result-badge');
+            badge.innerHTML =
+                `<div class="d-badge ${tier}">D</div>` +
+                `<div style="font-size:0.95em;margin-top:10px;color:#94a3b8">${D_BADGE_LABELS[tier] || ''}</div>`;
+        }
+
         function endGame() {
+            closeBattleModal();
             document.getElementById('game-screen').classList.remove('active');
             document.getElementById('result-screen').classList.add('active');
 
             const hpPct = playerHPTotal > 0 ? Math.round((playerHP / playerHPTotal) * 100) : 0;
             const allMastered = wrongWords.length === 0;
+            const tier = getDBadgeTier();
 
-            const badge = document.getElementById('result-badge');
             const title = document.getElementById('result-title');
             const desc = document.getElementById('result-desc');
             const replayBtn = document.getElementById('btn-replay');
 
-            document.getElementById('stat-total').textContent = playerHPTotal;
+            renderDBadge(tier);
+
+            document.getElementById('stat-total').textContent = totalQuestionsThisRound;
             document.getElementById('stat-correct').textContent = correctCount;
             document.getElementById('stat-wrong').textContent = wrongCount;
             document.getElementById('stat-hp').textContent = hpPct + '%';
 
-            if (allMastered) {
-                badge.innerHTML = '🏆';
-                title.textContent = 'Alles gemeistert!';
-                title.style.color = '#c9a227';
+            if (tier === 'diamond' && allMastered) {
+                title.textContent = 'Perfekt! Diamant-D!';
+                title.style.color = '#0ff';
                 desc.textContent = round > 1
-                    ? `Runde ${round} geschafft – alle Wörter gemeistert!`
-                    : 'Super! Die ganze Liste ist gemeistert!';
+                    ? `Runde ${round} – alle Wörter gemeistert, kein Fehler!`
+                    : '100% Leben, keine Fehler, keine Übersprungen – du bist ein Deutsch-Held!';
                 replayBtn.textContent = '🔄 Ganze Liste noch einmal';
-            } else if (hpPct >= 75) {
-                badge.innerHTML = '🥈';
+            } else if (allMastered) {
+                title.textContent = 'Alles gemeistert!';
+                title.style.color = tier === 'gold' ? '#ffd700' : '#c0c0c0';
+                desc.textContent = `Runde ${round} geschafft – alle Wörter gemeistert! (${D_BADGE_LABELS[tier]})`;
+                replayBtn.textContent = '🔄 Ganze Liste noch einmal';
+            } else if (tier === 'gold' || tier === 'silver') {
                 title.textContent = 'Weiter so!';
-                title.style.color = '#c0c0c0';
+                title.style.color = tier === 'gold' ? '#ffd700' : '#c0c0c0';
                 desc.textContent = `Runde ${round} beendet. Noch ${wrongWords.length} Wörter offen. Nächste Runde: Fehler + ca. 30 % Stichprobe.`;
                 replayBtn.textContent = `🔄 Noch einmal (${wrongWords.length} Fehler + Stichprobe)`;
             } else {
-                badge.innerHTML = wrongWords.length > 3 ? '💔' : '🥉';
                 title.textContent = 'Noch üben';
-                title.style.color = wrongWords.length > 3 ? '#ff4444' : '#cd7f32';
+                title.style.color = '#cd7f32';
                 desc.textContent = `Runde ${round} beendet. ${wrongWords.length} Wörter noch nicht gemeistert.`;
                 replayBtn.textContent = `🔄 Noch einmal (${wrongWords.length} Fehler + Stichprobe)`;
             }
