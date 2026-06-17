@@ -821,6 +821,84 @@
             max-height: 55vh;
             margin: 12px 0;
             padding: 8px 0;
+            position: relative;
+        }
+
+        #game-screen.overview-mode .adventure-path-wrap {
+            max-height: none;
+            flex: 1;
+            min-height: 0;
+        }
+
+        #game-screen.overview-mode .path-node {
+            padding: 4px 10px;
+            min-width: 52px;
+        }
+
+        #game-screen.overview-mode .path-node .node-monster {
+            font-size: 1.25em;
+        }
+
+        #game-screen.overview-mode .path-segment {
+            height: 12px;
+        }
+
+        #game-screen.overview-mode .path-node.goal {
+            font-size: 1.1em;
+        }
+
+        .hero-block {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #0ff, #00ff88);
+            border: 2px solid #fff;
+            border-radius: 3px;
+            box-shadow: 0 0 12px rgba(0, 255, 255, 0.9);
+            z-index: 20;
+            pointer-events: none;
+            opacity: 0;
+            left: 0;
+            top: 0;
+        }
+
+        .hero-block.visible {
+            opacity: 1;
+        }
+
+        .overview-panel {
+            text-align: center;
+            padding: 8px 0 4px;
+        }
+
+        .overview-hint {
+            color: #7dd3fc;
+            font-size: 0.95em;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+        }
+
+        .btn-los {
+            width: 100%;
+            max-width: 280px;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #ff00aa, #7b2fff);
+            border: 2px solid #0ff;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 0, 170, 0.4);
+            letter-spacing: 0.05em;
+        }
+
+        .btn-los:active { transform: scale(0.97); }
+
+        .btn-los:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .adventure-path {
@@ -905,14 +983,37 @@
         }
 
         #battle-modal {
+            display: none;
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            width: 100%;
+            max-width: 480px;
             z-index: 200;
+            pointer-events: none;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.35) 0%, transparent 40%);
+        }
+
+        #battle-modal.active {
+            display: flex;
+            pointer-events: auto;
         }
 
         .cyber-battle {
-            background: rgba(10, 10, 25, 0.95);
+            background: rgba(10, 10, 25, 0.97);
             border: 2px solid #0ff;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.35), inset 0 0 20px rgba(255, 0, 170, 0.08);
-            max-width: 360px;
+            border-bottom: none;
+            box-shadow: 0 -8px 32px rgba(0, 255, 255, 0.25);
+            max-width: 480px;
+            width: 100%;
+            max-height: 42vh;
+            overflow-y: auto;
+            border-radius: 16px 16px 0 0;
+            padding: 16px 18px 20px;
         }
 
         .cyber-battle .stage-badge {
@@ -1100,6 +1201,7 @@
             <button onclick="batchImport()" class="btn-batch">📥 Importieren</button>
         </div>
 
+        <div id="word-list-panel" style="display:none">
         <div class="divider">— Hinzugefügte Wörter —</div>
 
         <div id="word-list" class="word-list"></div>
@@ -1109,6 +1211,7 @@
             ⚔️ Kampf starten
         </button>
         <button onclick="clearAll()" class="btn-clear">🗑️ Alles löschen</button>
+        </div>
         <p class="storage-hint">Wortlisten und Fortschritt werden lokal im Browser gespeichert.</p>
     </div>
 
@@ -1128,12 +1231,18 @@
             </div>
         </div>
 
-        <div class="adventure-path-wrap">
+        <div class="adventure-path-wrap" id="path-wrap">
+            <div id="hero-block" class="hero-block" aria-hidden="true"></div>
             <div id="adventure-path" class="adventure-path"></div>
+        </div>
+
+        <div id="overview-panel" class="overview-panel" style="display:none">
+            <p id="overview-hint" class="overview-hint"></p>
+            <button id="btn-los" type="button" onclick="beginAdventure()" class="btn-los">Los!</button>
         </div>
     </div>
 
-    <div id="battle-modal" class="modal-overlay">
+    <div id="battle-modal">
         <div class="modal-box cyber-battle">
             <div class="stage-badge" id="stage-badge">Stufe 1/4</div>
             <div class="prompt-label">Englische Bedeutung</div>
@@ -1231,6 +1340,12 @@
         let roundSpotCount = 0;
         let listId = null;
         let dirty = false;
+        let listActive = false;
+        let gamePhase = 'overview';
+        let isHeroAnimating = false;
+        const HERO_WALK_MS = 900;
+        const HERO_ENTER_MS = 650;
+        const HERO_SIZE = 20;
 
         const WORD_TYPES = ['word', 'verb', 'phrase'];
         const TYPE_LABELS = { word: 'Wort', verb: 'Verb', phrase: 'Phrase' };
@@ -1371,6 +1486,7 @@
                 round = session.round || 1;
                 listId = session.listId || null;
                 dirty = !!session.dirty;
+                listActive = false;
                 updateWordList();
                 updateResumeBanner();
             } catch {
@@ -1398,6 +1514,8 @@
         }
 
         function resumeSession() {
+            listActive = true;
+            updateWordList();
             if (wrongWords.length > 0) {
                 replayGame();
             } else if (wordData.length > 0) {
@@ -1504,6 +1622,7 @@
                 round = 1;
                 listId = data.name;
                 dirty = false;
+                listActive = true;
                 updateWordList();
                 saveSession();
                 return true;
@@ -1626,6 +1745,7 @@
             round = 1;
             listId = name;
             dirty = false;
+            listActive = true;
             item.lastPlayed = new Date().toISOString().slice(0, 10);
             setLists(lists);
             updateWordList();
@@ -1691,16 +1811,21 @@
             round = 1;
             listId = null;
             dirty = false;
+            listActive = false;
             localStorage.removeItem(STORAGE_SESSION);
             updateWordList();
             updateResumeBanner();
         }
 
         function goToStartScreen() {
-            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.remove('active', 'overview-mode');
             document.getElementById('result-screen').classList.remove('active');
             document.getElementById('fail-screen').classList.remove('active');
             closeBattleModal();
+            showHero(false);
+            gamePhase = 'overview';
+            isHeroAnimating = false;
+            document.getElementById('overview-panel').style.display = 'none';
             document.getElementById('start-screen').classList.add('active');
             saveSession();
         }
@@ -1728,12 +1853,17 @@
                 listId = null;
                 wrongWords = [];
                 round = 1;
+                listActive = true;
                 markDirty();
                 updateWordList();
             }
         }
 
         function updateWordList() {
+            const panel = document.getElementById('word-list-panel');
+            const showPanel = listActive && wordData.length > 0;
+            panel.style.display = showPanel ? 'block' : 'none';
+
             const list = document.getElementById('word-list');
             list.innerHTML = '';
 
@@ -1752,11 +1882,11 @@
             document.getElementById('word-count-num').textContent = wordData.length;
             document.getElementById('total-questions').textContent = totalQ;
             document.getElementById('total-hp').textContent = calcPlayerHP(totalQ);
-            document.getElementById('btn-start').disabled = wordData.length === 0;
+            document.getElementById('btn-start').disabled = !showPanel;
 
             const titleExtra = listId ? ` · ${listId}` : (dirty ? ' · nicht gespeichert' : '');
             document.querySelector('#start-screen .subtitle').textContent =
-                SUBTITLE_BASE + (wordData.length ? titleExtra : '');
+                SUBTITLE_BASE + (showPanel ? titleExtra : '');
         }
 
         function removeWord(i) {
@@ -1834,7 +1964,7 @@
         function startGameInternal() {
             if (wordData.length === 0) return;
 
-            roundWordList = buildRoundWordList();
+            roundWordList = shuffle(buildRoundWordList());
             if (roundWordList.length === 0) return;
 
             currentWordIndex = 0;
@@ -1845,18 +1975,30 @@
             playerHP = playerHPTotal;
             defeatedIndices = new Set();
             anySkipThisRound = false;
+            gamePhase = 'overview';
+            isHeroAnimating = false;
 
             document.getElementById('start-screen').classList.remove('active');
             document.getElementById('result-screen').classList.remove('active');
             document.getElementById('fail-screen').classList.remove('active');
-            document.getElementById('game-screen').classList.add('active');
+            document.getElementById('game-screen').classList.add('active', 'overview-mode');
             closeBattleModal();
+            showHero(false);
+
+            document.getElementById('overview-panel').style.display = 'block';
+            document.getElementById('overview-hint').textContent =
+                `${roundWordList.length} Monster auf dem Weg zum D — bereit?`;
+            document.getElementById('btn-los').disabled = false;
 
             updateRoundInfo();
             updateHUD();
             renderAdventurePath();
-            loadWord(0);
             saveSession();
+
+            requestAnimationFrame(() => {
+                const wrap = document.getElementById('path-wrap');
+                wrap.scrollTop = wrap.scrollHeight;
+            });
 
             const input = document.getElementById('answer-input');
             input.onkeypress = function(e) {
@@ -1879,15 +2021,124 @@
         }
 
         function openBattleModal() {
-            document.getElementById('battle-modal').classList.add('active');
+            openBattlePanel();
         }
 
         function closeBattleModal() {
             document.getElementById('battle-modal').classList.remove('active');
         }
 
+        function openBattlePanel() {
+            document.getElementById('battle-modal').classList.add('active');
+            const input = document.getElementById('answer-input');
+            input.value = '';
+            input.disabled = false;
+            input.classList.remove('error');
+            hideFeedback();
+            setTimeout(() => input.focus(), 100);
+        }
+
+        function showHero(visible) {
+            const hero = document.getElementById('hero-block');
+            hero.classList.toggle('visible', visible);
+            hero.setAttribute('aria-hidden', visible ? 'false' : 'true');
+        }
+
+        function getPathWrap() {
+            return document.getElementById('path-wrap');
+        }
+
+        function getPathNode(type, index) {
+            const path = document.getElementById('adventure-path');
+            if (type === 'start') return path.querySelector('.path-node.start');
+            if (type === 'goal') return path.querySelector('.path-node.goal');
+            return path.querySelector(`.path-node.monster[data-index="${index}"]`);
+        }
+
+        function nodeCenterInWrap(node, wrap) {
+            const nr = node.getBoundingClientRect();
+            const wr = wrap.getBoundingClientRect();
+            return {
+                x: nr.left - wr.left + wrap.scrollLeft + nr.width / 2,
+                y: nr.top - wr.top + wrap.scrollTop + nr.height / 2
+            };
+        }
+
+        function setHeroAt(x, y, animate, durationMs, callback) {
+            const hero = document.getElementById('hero-block');
+            hero.style.transition = animate
+                ? `left ${durationMs}ms ease-in-out, top ${durationMs}ms ease-in-out`
+                : 'none';
+            hero.style.left = (x - HERO_SIZE / 2) + 'px';
+            hero.style.top = (y - HERO_SIZE / 2) + 'px';
+            if (animate && callback) {
+                setTimeout(callback, durationMs);
+            } else if (callback) {
+                callback();
+            }
+        }
+
+        function scrollPathToNode(node) {
+            const wrap = getPathWrap();
+            const c = nodeCenterInWrap(node, wrap);
+            const targetScroll = c.y - wrap.clientHeight / 2;
+            wrap.scrollTo({ top: Math.max(0, targetScroll), behavior: 'smooth' });
+        }
+
+        function enterHeroFromBelow(startNode, callback) {
+            const wrap = getPathWrap();
+            const c = nodeCenterInWrap(startNode, wrap);
+            showHero(true);
+            setHeroAt(c.x, c.y + 72, false);
+            requestAnimationFrame(() => {
+                setHeroAt(c.x, c.y, true, HERO_ENTER_MS, callback);
+            });
+        }
+
+        function moveHeroToNode(node, durationMs, callback) {
+            if (!node) {
+                if (callback) callback();
+                return;
+            }
+            const wrap = getPathWrap();
+            scrollPathToNode(node);
+            setTimeout(() => {
+                const c = nodeCenterInWrap(node, wrap);
+                setHeroAt(c.x, c.y, true, durationMs, callback);
+            }, 280);
+        }
+
+        function beginAdventure() {
+            if (isHeroAnimating || gamePhase !== 'overview') return;
+            isHeroAnimating = true;
+            document.getElementById('btn-los').disabled = true;
+            document.getElementById('overview-panel').style.display = 'none';
+            document.getElementById('game-screen').classList.remove('overview-mode');
+
+            gamePhase = 'walking';
+            prepareWord(0);
+            renderAdventurePath();
+
+            requestAnimationFrame(() => {
+                const wrap = getPathWrap();
+                wrap.scrollTop = wrap.scrollHeight;
+
+                const startNode = getPathNode('start');
+                const monsterNode = getPathNode('monster', 0);
+
+                enterHeroFromBelow(startNode, () => {
+                    moveHeroToNode(monsterNode, HERO_WALK_MS, () => {
+                        isHeroAnimating = false;
+                        gamePhase = 'battle';
+                        openBattlePanel();
+                    });
+                });
+            });
+        }
+
         function renderAdventurePath() {
             const path = document.getElementById('adventure-path');
+            const isOverview = gamePhase === 'overview';
             path.innerHTML = '';
             const frag = document.createDocumentFragment();
 
@@ -1901,18 +2152,16 @@
                 seg.className = 'path-segment' + (defeatedIndices.has(i) ? ' hidden' : '');
                 frag.appendChild(seg);
 
-                const word = normalizeWord(roundWordList[i]);
                 const defeated = defeatedIndices.has(i);
-                const active = i === currentWordIndex && !defeated;
+                const active = !isOverview && i === currentWordIndex && !defeated &&
+                    (gamePhase === 'battle' || gamePhase === 'walking');
                 const node = document.createElement('div');
                 node.className = 'path-node monster' + (defeated ? ' defeated' : '') + (active ? ' active' : '');
                 node.dataset.index = String(i);
 
                 const monsterEmoji = PATH_MONSTERS[i % PATH_MONSTERS.length];
                 let inner = '';
-                if (active) inner += '<div class="node-hero">🧑‍🚀</div>';
                 if (!defeated) inner += `<div class="node-monster">${monsterEmoji}</div>`;
-                inner += `<div class="node-label">${escapeHtml(word.english)}</div>`;
                 node.innerHTML = inner;
                 frag.appendChild(node);
             }
@@ -1928,42 +2177,56 @@
 
             path.appendChild(frag);
 
-            requestAnimationFrame(() => {
-                const activeNode = path.querySelector('.path-node.monster.active');
-                if (activeNode) {
-                    activeNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            });
-        }
-
-        function advanceToNextWord() {
-            if (currentWordIndex + 1 < roundWordList.length) {
-                loadWord(currentWordIndex + 1);
-                updateHUD();
-            } else {
-                closeBattleModal();
-                endGame();
+            if (!isOverview) {
+                requestAnimationFrame(() => {
+                    const activeNode = path.querySelector('.path-node.monster.active') ||
+                        getPathNode('monster', currentWordIndex);
+                    if (activeNode && !defeatedIndices.has(currentWordIndex)) {
+                        scrollPathToNode(activeNode);
+                    }
+                });
             }
         }
 
-        function loadWord(index) {
+        function prepareWord(index) {
             currentWordIndex = index;
             currentStage = 1;
             monsterHP = getStageCount(getCurrentWord());
             currentWrongAttempts = 0;
             currentWordSession = { hadSkip: false };
-
-            renderAdventurePath();
             updateMonsterHP();
             updatePrompt();
-            openBattleModal();
+        }
 
-            const input = document.getElementById('answer-input');
-            input.value = '';
-            input.disabled = false;
-            input.classList.remove('error');
-            input.focus();
-            hideFeedback();
+        function advanceToNextWord() {
+            const nextIndex = currentWordIndex + 1;
+            if (nextIndex < roundWordList.length) {
+                gamePhase = 'walking';
+                prepareWord(nextIndex);
+                renderAdventurePath();
+                updateHUD();
+                isHeroAnimating = true;
+                moveHeroToNode(getPathNode('monster', nextIndex), HERO_WALK_MS, () => {
+                    isHeroAnimating = false;
+                    gamePhase = 'battle';
+                    openBattlePanel();
+                });
+            } else {
+                closeBattleModal();
+                gamePhase = 'walking';
+                isHeroAnimating = true;
+                moveHeroToNode(getPathNode('goal'), HERO_WALK_MS, () => {
+                    isHeroAnimating = false;
+                    endGame();
+                });
+            }
+        }
+
+        function loadWord(index) {
+            prepareWord(index);
+            renderAdventurePath();
+            gamePhase = 'battle';
+            openBattlePanel();
         }
 
         function updatePrompt() {
@@ -2076,7 +2339,9 @@
 
         function triggerFailScreen() {
             closeBattleModal();
-            document.getElementById('game-screen').classList.remove('active');
+            showHero(false);
+            document.getElementById('game-screen').classList.remove('active', 'overview-mode');
+            document.getElementById('overview-panel').style.display = 'none';
             const fail = document.getElementById('fail-screen');
             fail.classList.add('active', 'lightning-flash');
             setTimeout(() => fail.classList.remove('lightning-flash'), 600);
@@ -2100,12 +2365,12 @@
 
         function onMonsterDefeated() {
             defeatedIndices.add(currentWordIndex);
-            renderAdventurePath();
             closeBattleModal();
+            renderAdventurePath();
             setTimeout(() => {
                 finishCurrentWord();
                 advanceToNextWord();
-            }, 700);
+            }, 450);
         }
 
         function submitAnswer() {
@@ -2113,7 +2378,7 @@
             const value = input.value.trim();
             const word = getCurrentWord();
 
-            if (!value || input.disabled) return;
+            if (!value || input.disabled || isHeroAnimating || gamePhase !== 'battle') return;
 
             const stageAnswers = getStageAnswers(word, currentStage);
             const isCorrect = answersMatch(value, stageAnswers);
@@ -2220,7 +2485,9 @@
 
         function endGame() {
             closeBattleModal();
-            document.getElementById('game-screen').classList.remove('active');
+            showHero(false);
+            document.getElementById('game-screen').classList.remove('active', 'overview-mode');
+            document.getElementById('overview-panel').style.display = 'none';
             document.getElementById('result-screen').classList.add('active');
 
             const hpPct = playerHPTotal > 0 ? Math.round((playerHP / playerHPTotal) * 100) : 0;
@@ -2311,6 +2578,7 @@
 
         renderSavedLists();
         loadSessionOnStartup();
+        updateWordList();
         initSharedLists();
     </script>
 </body>
