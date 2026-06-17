@@ -1117,9 +1117,23 @@
             return /^[a-zA-Z0-9_-]+$/.test(id);
         }
 
+        function getAppBasePath() {
+            let path = window.location.pathname;
+            if (path.endsWith('.html')) {
+                path = path.slice(0, path.lastIndexOf('/') + 1);
+            } else if (!path.endsWith('/')) {
+                path = path + '/';
+            }
+            return path;
+        }
+
+        function listsAssetUrl(filename) {
+            return window.location.origin + getAppBasePath() + 'lists/' + filename;
+        }
+
         async function fetchSharedListData(id) {
             if (!isValidListId(id)) throw new Error('invalid id');
-            const res = await fetch(`lists/${id}.json`);
+            const res = await fetch(listsAssetUrl(`${id}.json`));
             if (!res.ok) throw new Error('not found');
             const data = await res.json();
             const words = Array.isArray(data) ? data : data.words;
@@ -1157,7 +1171,7 @@
         async function renderSharedLists() {
             const container = document.getElementById('shared-lists-container');
             try {
-                const res = await fetch('lists/index.json');
+                const res = await fetch(listsAssetUrl('index.json'));
                 if (!res.ok) throw new Error('index missing');
                 const catalog = await res.json();
                 if (!Array.isArray(catalog) || catalog.length === 0) {
