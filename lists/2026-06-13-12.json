@@ -1,0 +1,101 @@
+{
+  "name": "Verben 02",
+  "words": [
+    {
+      "type": "verb",
+      "english": "to look, to appear",
+      "infinitiv": "aussehen",
+      "person3": "sieht...aus",
+      "prateritum": "sah...aus",
+      "perfekt": "hat ausgesehen"
+    },
+    {
+      "type": "verb",
+      "english": "to get off/out",
+      "infinitiv": "aussteigen",
+      "person3": "steigt...aus",
+      "prateritum": "stieg...aus",
+      "perfekt": "ist ausgestiegen"
+    },
+    {
+      "type": "verb",
+      "english": "to take off (clothes)",
+      "infinitiv": "ausziehen",
+      "person3": "zieht...aus",
+      "prateritum": "zog...aus",
+      "perfekt": "hat ausgezogen"
+    },
+    {
+      "type": "verb",
+      "english": "to bake",
+      "infinitiv": "backen",
+      "person3": "bäckt/backt",
+      "prateritum": "backte",
+      "perfekt": "hat gebacken"
+    },
+    {
+      "type": "verb",
+      "english": "to order (someone to do something)",
+      "infinitiv": "befehlen",
+      "person3": "befiehlt",
+      "prateritum": "befahl",
+      "perfekt": "hat befohlen"
+    },
+    {
+      "type": "verb",
+      "english": "to begin",
+      "infinitiv": "beginnen",
+      "person3": "beginnt",
+      "prateritum": "begann",
+      "perfekt": "hat begonnen"
+    },
+    {
+      "type": "verb",
+      "english": "to keep",
+      "infinitiv": "behalten",
+      "person3": "behält",
+      "prateritum": "behielt",
+      "perfekt": "hat behalten"
+    },
+    {
+      "type": "verb",
+      "english": "to bite",
+      "infinitiv": "beißen",
+      "person3": "beißt",
+      "prateritum": "biss",
+      "perfekt": "hat gebissen"
+    },
+    {
+      "type": "verb",
+      "english": "to get, to receive",
+      "infinitiv": "bekommen",
+      "person3": "bekommt",
+      "prateritum": "bekam",
+      "perfekt": "hat bekommen"
+    },
+    {
+      "type": "verb",
+      "english": "to decide",
+      "infinitiv": "beschließen",
+      "person3": "beschließt",
+      "prateritum": "beschloss",
+      "perfekt": "hat beschlossen"
+    },
+    {
+      "type": "verb",
+      "english": "to describe",
+      "infinitiv": "beschreiben",
+      "person3": "beschreibt",
+      "prateritum": "beschrieb",
+      "perfekt": "hat beschrieben"
+    },
+    {
+      "type": "verb",
+      "english": "to own",
+      "infinitiv": "besitzen",
+      "person3": "besitzt",
+      "prateritum": "besaß",
+      "perfekt": "hat besessen"
+    }
+  ]
+}
