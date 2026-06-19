@@ -1,0 +1,117 @@
+{
+  "name": "Verben 03",
+  "words": [
+    {
+      "type": "verb",
+      "english": "to bend",
+      "infinitiv": "biegen",
+      "person3": "biegt",
+      "prateritum": "bog",
+      "perfekt": "hat gebogen"
+    },
+    {
+      "type": "verb",
+      "english": "to offer",
+      "infinitiv": "bieten",
+      "person3": "bietet",
+      "prateritum": "bot",
+      "perfekt": "hat geboten"
+    },
+    {
+      "type": "verb",
+      "english": "to tie",
+      "infinitiv": "binden",
+      "person3": "bindet",
+      "prateritum": "band",
+      "perfekt": "hat gebunden"
+    },
+    {
+      "type": "verb",
+      "english": "to ask",
+      "infinitiv": "bitten",
+      "person3": "bittet",
+      "prateritum": "bat",
+      "perfekt": "hat gebeten"
+    },
+    {
+      "type": "verb",
+      "english": "to blow",
+      "infinitiv": "blasen",
+      "person3": "bläst",
+      "prateritum": "blies",
+      "perfekt": "hat geblasen"
+    },
+    {
+      "type": "verb",
+      "english": "to stay, to remain",
+      "infinitiv": "bleiben",
+      "person3": "bleibt",
+      "prateritum": "blieb",
+      "perfekt": "ist geblieben"
+    },
+    {
+      "type": "verb",
+      "english": "to fry, to roast",
+      "infinitiv": "braten",
+      "person3": "brät",
+      "prateritum": "briet",
+      "perfekt": "hat gebraten"
+    },
+    {
+      "type": "verb",
+      "english": "to break, to vomit",
+      "infinitiv": "brechen",
+      "person3": "bricht",
+      "prateritum": "brach",
+      "perfekt": "hat gebrochen"
+    },
+    {
+      "type": "verb",
+      "english": "to burn, be on fire",
+      "infinitiv": "brennen",
+      "person3": "brennt",
+      "prateritum": "brannte",
+      "perfekt": "hat gebrannt"
+    },
+    {
+      "type": "verb",
+      "english": "to bring, take",
+      "infinitiv": "bringen",
+      "person3": "bringt",
+      "prateritum": "brachte",
+      "perfekt": "hat gebracht"
+    },
+    {
+      "type": "verb",
+      "english": "to think",
+      "infinitiv": "denken",
+      "person3": "denkt",
+      "prateritum": "dachte",
+      "perfekt": "hat gedacht"
+    },
+    {
+      "type": "verb",
+      "english": "to be allowed to",
+      "infinitiv": "dürfen",
+      "person3": "darf",
+      "prateritum": "durfte",
+      "perfekt": "hat dürfen"
+    },
+    {
+      "type": "verb",
+      "english": "to invite",
+      "infinitiv": "einladen",
+      "person3": "lädt...ein",
+      "prateritum": "lud...ein",
+      "perfekt": "hat eingeladen"
+    },
+    {
+      "type": "verb",
+      "english": "to go to sleep",
+      "infinitiv": "einschlafen",
+      "person3": "schläft...ein",
+      "prateritum": "schlief...ein",
+      "perfekt": "ist eingeschlafen"
+    }
+  ]
+}
