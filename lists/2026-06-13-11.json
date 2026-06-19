@@ -1,0 +1,93 @@
+{
+  "name": "Trennbare Verben (11)",
+  "words": [
+    {
+      "type": "verb",
+      "english": "to turn off (a road)",
+      "infinitiv": "abbiegen",
+      "person3": "biegt...ab",
+      "prateritum": "bog...ab",
+      "perfekt": "ist abgebogen"
+    },
+    {
+      "type": "verb",
+      "english": "to depart",
+      "infinitiv": "abfahren",
+      "person3": "fährt...ab",
+      "prateritum": "fuhr...ab",
+      "perfekt": "ist abgefahren"
+    },
+    {
+      "type": "verb",
+      "english": "to wash up",
+      "infinitiv": "abwaschen",
+      "person3": "wäscht...ab",
+      "prateritum": "wusch...ab",
+      "perfekt": "hat abgewaschen"
+    },
+    {
+      "type": "verb",
+      "english": "to offer",
+      "infinitiv": "anbieten",
+      "person3": "bietet...an",
+      "prateritum": "bot...an",
+      "perfekt": "hat angeboten"
+    },
+    {
+      "type": "verb",
+      "english": "to start",
+      "infinitiv": "anfangen",
+      "person3": "fängt...an",
+      "prateritum": "fing...an",
+      "perfekt": "hat angefangen"
+    },
+    {
+      "type": "verb",
+      "english": "to arrive",
+      "infinitiv": "ankommen",
+      "person3": "kommt...an",
+      "prateritum": "kam...an",
+      "perfekt": "ist angekommen"
+    },
+    {
+      "type": "verb",
+      "english": "to ring someone up",
+      "infinitiv": "anrufen",
+      "person3": "ruft...an",
+      "prateritum": "rief...an",
+      "perfekt": "hat angerufen"
+    },
+    {
+      "type": "verb",
+      "english": "to put on (clothes)",
+      "infinitiv": "anziehen",
+      "person3": "zieht...an",
+      "prateritum": "zog...an",
+      "perfekt": "hat angezogen"
+    },
+    {
+      "type": "verb",
+      "english": "to pick something up; to keep",
+      "infinitiv": "aufheben",
+      "person3": "hebt...auf",
+      "prateritum": "hob...auf",
+      "perfekt": "hat aufgehoben"
+    },
+    {
+      "type": "verb",
+      "english": "to get up",
+      "infinitiv": "aufstehen",
+      "person3": "steht...auf",
+      "prateritum": "stand...auf",
+      "perfekt": "ist aufgestanden"
+    },
+    {
+      "type": "verb",
+      "english": "to spend (money)",
+      "infinitiv": "ausgeben",
+      "person3": "gibt...aus",
+      "prateritum": "gab...aus",
+      "perfekt": "hat ausgegeben"
+    }
+  ]
+}
