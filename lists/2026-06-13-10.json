@@ -1,0 +1,85 @@
+{
+  "name": "Verben 04",
+  "words": [
+    {
+      "type": "verb",
+      "english": "to get in/on",
+      "infinitiv": "einsteigen",
+      "person3": "steigt...ein",
+      "prateritum": "stieg...ein",
+      "perfekt": "ist eingestiegen"
+    },
+    {
+      "type": "verb",
+      "english": "to receive",
+      "infinitiv": "empfangen",
+      "person3": "empfängt",
+      "prateritum": "empfing",
+      "perfekt": "hat empfangen"
+    },
+    {
+      "type": "verb",
+      "english": "to recommend",
+      "infinitiv": "empfehlen",
+      "person3": "empfiehlt",
+      "prateritum": "empfahl",
+      "perfekt": "hat empfohlen"
+    },
+    {
+      "type": "verb",
+      "english": "to decide",
+      "infinitiv": "sich entscheiden",
+      "person3": "entscheidet sich",
+      "prateritum": "entschied sich",
+      "perfekt": "hat sich entschieden"
+    },
+    {
+      "type": "verb",
+      "english": "to make up one's mind",
+      "infinitiv": "sich entschließen",
+      "person3": "entschließt sich",
+      "prateritum": "entschloss sich",
+      "perfekt": "hat sich entschlossen"
+    },
+    {
+      "type": "verb",
+      "english": "to receive",
+      "infinitiv": "erhalten",
+      "person3": "erhält",
+      "prateritum": "erhielt",
+      "perfekt": "hat erhalten"
+    },
+    {
+      "type": "verb",
+      "english": "to recognise",
+      "infinitiv": "erkennen",
+      "person3": "erkennt",
+      "prateritum": "erkannte",
+      "perfekt": "hat erkannt"
+    },
+    {
+      "type": "verb",
+      "english": "to appear",
+      "infinitiv": "erscheinen",
+      "person3": "erscheint",
+      "prateritum": "erschien",
+      "perfekt": "ist erschienen"
+    },
+    {
+      "type": "verb",
+      "english": "to get a fright",
+      "infinitiv": "erschrecken",
+      "person3": "erschrickt",
+      "prateritum": "erschrak",
+      "perfekt": "ist erschrocken"
+    },
+    {
+      "type": "verb",
+      "english": "to eat",
+      "infinitiv": "essen",
+      "person3": "isst",
+      "prateritum": "aß",
+      "perfekt": "hat gegessen"
+    }
+  ]
+}
