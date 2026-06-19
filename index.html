@@ -810,6 +810,20 @@
             color: #558b2f;
         }
 
+        .monster-hp-hud {
+            font-size: 0.78em;
+            color: #8d6e63;
+            margin-top: 6px;
+        }
+
+        #game-screen.overview-mode .monster-hp-hud {
+            display: none;
+        }
+
+        .monster-hp-hud strong {
+            color: #e65100;
+        }
+
         #game-screen .progress .current {
             color: #e65100;
         }
@@ -998,36 +1012,50 @@
             box-shadow: 0 -8px 32px rgba(0, 255, 255, 0.25);
             max-width: 430px;
             width: 100%;
-            max-height: 42vh;
+            max-height: 34vh;
             overflow-y: auto;
             border-radius: 16px 16px 0 0;
-            padding: 16px 18px 20px;
+            padding: 10px 14px 14px;
         }
 
-        .cyber-battle .stage-badge {
-            background: rgba(255, 0, 170, 0.2);
-            color: #f0abfc;
-            border-color: #ff00aa;
+        .cyber-battle .prompt-line {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 6px;
+            margin-bottom: 6px;
+            line-height: 1.35;
+        }
+
+        .cyber-battle .prompt-label {
+            color: #94a3b8;
+            font-size: 0.88em;
+            flex-shrink: 0;
         }
 
         .cyber-battle .prompt-value {
             color: #0ff;
-            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            font-size: 1.05em;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+            word-break: break-word;
         }
 
         .cyber-battle .prompt-target {
             color: #ff6ec7;
+            font-size: 0.9em;
+            margin-bottom: 8px;
         }
 
         #battle-modal #answer-input {
             width: 100%;
-            padding: 14px;
+            padding: 11px 12px;
             background: rgba(0, 0, 0, 0.5);
             border: 2px solid rgba(0, 255, 255, 0.4);
             border-radius: 10px;
             color: #fff;
-            font-size: 1.1em;
-            margin-bottom: 10px;
+            font-size: 1em;
+            margin-bottom: 8px;
         }
 
         #battle-modal #answer-input:focus {
@@ -1038,29 +1066,22 @@
 
         .btn-attack-cyber {
             width: 100%;
-            padding: 14px;
+            padding: 11px;
             background: linear-gradient(135deg, #ff00aa, #7b2fff);
             border: 1px solid #0ff;
             border-radius: 10px;
             color: #fff;
-            font-size: 1.1em;
+            font-size: 1em;
             font-weight: bold;
             cursor: pointer;
         }
 
-        .monster-hp-inline {
-            width: 100%;
-            height: 8px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 4px;
-            margin: 10px 0;
-            overflow: hidden;
-        }
-
-        .monster-hp-inline-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff0055, #ff00aa);
-            transition: width 0.3s;
+        #battle-modal .feedback {
+            min-height: 0;
+            margin-top: 8px;
+            margin-bottom: 0;
+            padding: 8px 10px;
+            font-size: 0.9em;
         }
 
         #fail-screen {
@@ -1212,6 +1233,9 @@
                     <div id="player-hp-fill" class="hp-fill" style="width: 100%"></div>
                 </div>
                 <div class="hp-text"><span id="player-hp-current">0</span> / <span id="player-hp-total">0</span></div>
+                <div class="monster-hp-hud" id="monster-hp-hud">
+                    Monster LP: <strong><span id="monster-hp-num">0</span>/<span id="monster-hp-max">0</span></strong>
+                </div>
             </div>
             <div class="progress">
                 <div class="current"><span id="current-word">1</span><span class="total">/<span id="total-word">0</span></span></div>
@@ -1237,16 +1261,11 @@
 
     <div id="battle-modal">
         <div class="modal-box cyber-battle">
-            <div class="stage-badge" id="stage-badge">Stufe 1/4</div>
-            <div class="prompt-label">Englische Bedeutung</div>
-            <div class="prompt-value" id="prompt-value">-</div>
+            <div class="prompt-line">
+                <span class="prompt-label">Englische Bedeutung:</span>
+                <span class="prompt-value" id="prompt-value">-</span>
+            </div>
             <div class="prompt-target" id="prompt-target">Infinitiv eingeben</div>
-            <div class="monster-hp-inline">
-                <div id="monster-hp-fill" class="monster-hp-inline-fill" style="width: 100%"></div>
-            </div>
-            <div class="monster-hp-text" style="text-align:center;font-size:0.85em;color:#94a3b8;margin-bottom:12px">
-                Monster LP: <span id="monster-hp-num">4</span>/<span id="monster-hp-max">4</span>
-            </div>
             <input type="text" id="answer-input" placeholder="Antwort eingeben…" autocomplete="off" />
             <button onclick="submitAnswer()" class="btn-attack-cyber">⚔️ ANGRIFF</button>
             <div id="feedback" class="feedback hidden"></div>
@@ -2437,9 +2456,7 @@
 
         function updatePrompt() {
             const word = normalizeWord(getCurrentWord());
-            const maxStage = getStageCount(word);
 
-            document.getElementById('stage-badge').textContent = `Stufe ${currentStage}/${maxStage}`;
             document.getElementById('prompt-value').textContent = word.english;
 
             if (word.type === 'verb') {
@@ -2530,8 +2547,6 @@
 
         function updateMonsterHP() {
             const maxHP = getStageCount(getCurrentWord());
-            const pct = maxHP > 0 ? (monsterHP / maxHP) * 100 : 0;
-            document.getElementById('monster-hp-fill').style.width = pct + '%';
             document.getElementById('monster-hp-num').textContent = monsterHP;
             document.getElementById('monster-hp-max').textContent = maxHP;
         }
