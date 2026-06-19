@@ -785,77 +785,143 @@
         }
 
         #game-screen {
-            padding: 12px 16px 20px;
+            padding: 8px 10px;
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
             display: none;
+            width: 100%;
         }
 
         #game-screen.active {
             display: flex;
             flex-direction: column;
-            max-width: 480px;
+            max-width: 430px;
+            min-height: 100dvh;
+            margin: 0 auto;
         }
 
         #game-screen .hud {
-            background: rgba(0, 255, 255, 0.06);
-            border: 1px solid rgba(0, 255, 255, 0.25);
-            box-shadow: 0 0 20px rgba(255, 0, 170, 0.15);
+            background: rgba(255, 255, 255, 0.92);
+            border: 2px solid #7cb342;
+            border-radius: 14px;
+            box-shadow: 0 3px 10px rgba(56, 94, 30, 0.2);
         }
 
-        #game-screen .hp-label,
+        #game-screen .hp-label {
+            color: #558b2f;
+        }
+
+        #game-screen .progress .current {
+            color: #e65100;
+        }
+
         #game-screen .progress .total {
-            color: #7dd3fc;
+            color: #8d6e63;
         }
 
         .round-info {
             text-align: center;
-            color: #f0abfc;
+            color: #558b2f;
             font-size: 0.85em;
-            margin-bottom: 10px;
-            text-shadow: 0 0 8px rgba(240, 171, 252, 0.5);
+            margin-bottom: 8px;
+            font-weight: 600;
         }
 
         .adventure-path-wrap {
             flex: 1;
+            overflow-x: hidden;
             overflow-y: auto;
-            min-height: 45vh;
-            max-height: 55vh;
-            margin: 12px 0;
-            padding: 8px 0;
+            min-height: 0;
+            margin: 8px 0;
             position: relative;
+            border-radius: 16px;
+            border: 3px solid #689f38;
+            box-shadow: inset 0 0 0 2px #a5d66a, 0 4px 12px rgba(0, 0, 0, 0.15);
+            background: #4a8f32;
         }
 
         #game-screen.overview-mode .adventure-path-wrap {
-            max-height: none;
-            flex: 1;
-            min-height: 0;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
         }
 
-        #game-screen.overview-mode .path-node {
-            padding: 4px 10px;
-            min-width: 52px;
+        .map-board {
+            position: relative;
+            width: 100%;
+            margin: 0 auto;
         }
 
-        #game-screen.overview-mode .path-node .node-monster {
-            font-size: 1.25em;
+        #game-screen.overview-mode .map-board {
+            transform-origin: top center;
         }
 
-        #game-screen.overview-mode .path-segment {
-            height: 12px;
+        .map-svg {
+            display: block;
+            width: 100%;
+            height: auto;
+            vertical-align: top;
         }
 
-        #game-screen.overview-mode .path-node.goal {
-            font-size: 1.1em;
+        .map-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .map-marker {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+
+        .map-marker.start-marker,
+        .map-marker.goal-marker {
+            font-size: 22px;
+            filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25));
+            z-index: 5;
+        }
+
+        .map-marker.goal-marker .goal-label {
+            display: block;
+            font-size: 10px;
+            font-weight: bold;
+            color: #5d4037;
+            text-align: center;
+            margin-top: 2px;
+            text-shadow: 0 1px 0 #fff;
+        }
+
+        .map-monster {
+            font-size: 26px;
+            line-height: 1;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            z-index: 8;
+        }
+
+        .map-marker.monster.active .map-monster {
+            animation: monsterBounce 0.6s ease-in-out infinite;
+        }
+
+        @keyframes monsterBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.12); }
+        }
+
+        .map-marker.monster.defeated {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0);
         }
 
         .hero-block {
             position: absolute;
-            width: 20px;
-            height: 20px;
-            background: linear-gradient(135deg, #0ff, #00ff88);
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(145deg, #ff9800, #f57c00);
             border: 2px solid #fff;
-            border-radius: 3px;
-            box-shadow: 0 0 12px rgba(0, 255, 255, 0.9);
-            z-index: 20;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+            z-index: 25;
             pointer-events: none;
             opacity: 0;
             left: 0;
@@ -872,114 +938,36 @@
         }
 
         .overview-hint {
-            color: #7dd3fc;
+            color: #558b2f;
             font-size: 0.95em;
             margin-bottom: 12px;
             line-height: 1.5;
-            text-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+            font-weight: 600;
         }
 
         .btn-los {
             width: 100%;
             max-width: 280px;
             padding: 16px 24px;
-            background: linear-gradient(135deg, #ff00aa, #7b2fff);
-            border: 2px solid #0ff;
-            border-radius: 12px;
-            color: #fff;
+            background: linear-gradient(180deg, #ffca28, #ff9800);
+            border: 3px solid #e65100;
+            border-radius: 16px;
+            color: #5d4037;
             font-size: 1.3em;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 0 20px rgba(255, 0, 170, 0.4);
+            box-shadow: 0 4px 0 #bf360c, 0 6px 12px rgba(0, 0, 0, 0.2);
             letter-spacing: 0.05em;
         }
 
-        .btn-los:active { transform: scale(0.97); }
+        .btn-los:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #bf360c;
+        }
 
         .btn-los:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-        }
-
-        .adventure-path {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0;
-            min-height: 100%;
-            justify-content: flex-end;
-        }
-
-        .path-segment {
-            width: 3px;
-            height: 28px;
-            background: linear-gradient(180deg, #0ff, #ff00aa);
-            box-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
-            opacity: 0.7;
-        }
-
-        .path-segment.hidden { opacity: 0; height: 8px; }
-
-        .path-node {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px 16px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(20, 20, 40, 0.8);
-            min-width: 120px;
-            transition: all 0.4s ease;
-        }
-
-        .path-node.goal {
-            border-color: #ffd700;
-            box-shadow: 0 0 16px rgba(255, 215, 0, 0.4);
-            font-size: 1.4em;
-        }
-
-        .path-node.start {
-            border-color: #0ff;
-            color: #0ff;
-            font-size: 0.85em;
-        }
-
-        .path-node.monster.active {
-            border-color: #ff00aa;
-            box-shadow: 0 0 24px rgba(255, 0, 170, 0.55);
-            transform: scale(1.05);
-        }
-
-        .path-node.monster.defeated {
-            opacity: 0;
-            transform: scale(0);
-            height: 0;
-            padding: 0;
-            margin: 0;
-            overflow: hidden;
-            border: none;
-        }
-
-        .path-node .node-monster {
-            font-size: 2.2em;
-            filter: drop-shadow(0 0 12px rgba(255, 0, 170, 0.6));
-        }
-
-        .path-node .node-hero {
-            font-size: 1.6em;
-            margin-bottom: 4px;
-            filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.8));
-        }
-
-        .path-node .node-label {
-            font-size: 0.7em;
-            color: #94a3b8;
-            margin-top: 4px;
-            max-width: 140px;
-            text-align: center;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
 
         #battle-modal {
@@ -989,7 +977,7 @@
             transform: translateX(-50%);
             bottom: 0;
             width: 100%;
-            max-width: 480px;
+            max-width: 430px;
             z-index: 200;
             pointer-events: none;
             flex-direction: column;
@@ -1008,7 +996,7 @@
             border: 2px solid #0ff;
             border-bottom: none;
             box-shadow: 0 -8px 32px rgba(0, 255, 255, 0.25);
-            max-width: 480px;
+            max-width: 430px;
             width: 100%;
             max-height: 42vh;
             overflow-y: auto;
@@ -1232,8 +1220,13 @@
         </div>
 
         <div class="adventure-path-wrap" id="path-wrap">
-            <div id="hero-block" class="hero-block" aria-hidden="true"></div>
-            <div id="adventure-path" class="adventure-path"></div>
+            <div id="map-board" class="map-board">
+                <svg id="map-svg" class="map-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"></svg>
+                <div id="map-overlay" class="map-overlay">
+                    <div id="map-markers"></div>
+                    <div id="hero-block" class="hero-block" aria-hidden="true"></div>
+                </div>
+            </div>
         </div>
 
         <div id="overview-panel" class="overview-panel" style="display:none">
@@ -1345,7 +1338,14 @@
         let isHeroAnimating = false;
         const HERO_WALK_MS = 900;
         const HERO_ENTER_MS = 650;
-        const HERO_SIZE = 20;
+        const HERO_SIZE = 16;
+        const MAP_W = 360;
+        const MAP_SEG_H = 50;
+        const MAP_PAD_TOP = 58;
+        const MAP_PAD_BOT = 58;
+        const MAP_ROAD_AMP = 0.30;
+        const MONSTER_SIDE_OFFSET = 38;
+        let mapState = { width: MAP_W, height: 400, waypoints: [], heroT: 0 };
 
         const WORD_TYPES = ['word', 'verb', 'phrase'];
         const TYPE_LABELS = { word: 'Wort', verb: 'Verb', phrase: 'Phrase' };
@@ -2048,20 +2048,121 @@
             return document.getElementById('path-wrap');
         }
 
-        function getPathNode(type, index) {
-            const path = document.getElementById('adventure-path');
-            if (type === 'start') return path.querySelector('.path-node.start');
-            if (type === 'goal') return path.querySelector('.path-node.goal');
-            return path.querySelector(`.path-node.monster[data-index="${index}"]`);
+        function computeMapLayout(monsterCount) {
+            const height = MAP_PAD_TOP + MAP_PAD_BOT + Math.max(1, monsterCount + 1) * MAP_SEG_H;
+            const cx = MAP_W / 2;
+            const amp = MAP_W * MAP_ROAD_AMP;
+            const knots = [];
+            const total = monsterCount + 2;
+            for (let i = 0; i < total; i++) {
+                const t = i / (total - 1);
+                const y = height - MAP_PAD_BOT - t * (height - MAP_PAD_TOP - MAP_PAD_BOT);
+                let x = cx;
+                if (i > 0 && i < total - 1) {
+                    const mi = i - 1;
+                    x = cx + (mi % 2 === 0 ? amp : -amp);
+                }
+                const type = i === 0 ? 'start' : i === total - 1 ? 'goal' : 'monster';
+                const index = type === 'monster' ? i - 1 : -1;
+                knots.push({ x, y, type, index });
+            }
+            return { width: MAP_W, height, knots };
         }
 
-        function nodeCenterInWrap(node, wrap) {
-            const nr = node.getBoundingClientRect();
-            const wr = wrap.getBoundingClientRect();
+        function knotsToPathD(knots) {
+            if (knots.length < 2) return '';
+            let d = `M ${knots[0].x} ${knots[0].y}`;
+            for (let i = 0; i < knots.length - 1; i++) {
+                const a = knots[i];
+                const b = knots[i + 1];
+                const cy1 = a.y - (a.y - b.y) * 0.38;
+                const cy2 = b.y + (a.y - b.y) * 0.38;
+                d += ` C ${a.x} ${cy1}, ${b.x} ${cy2}, ${b.x} ${b.y}`;
+            }
+            return d;
+        }
+
+        function svgToOverlay(svgX, svgY) {
+            const svg = document.getElementById('map-svg');
+            const overlay = document.getElementById('map-overlay');
+            const vb = svg.viewBox.baseVal;
+            const sr = svg.getBoundingClientRect();
+            const or = overlay.getBoundingClientRect();
+            if (!vb.width || !sr.width) return { x: 0, y: 0 };
             return {
-                x: nr.left - wr.left + wrap.scrollLeft + nr.width / 2,
-                y: nr.top - wr.top + wrap.scrollTop + nr.height / 2
+                x: ((svgX / vb.width) * sr.width) + (sr.left - or.left),
+                y: ((svgY / vb.height) * sr.height) + (sr.top - or.top)
             };
+        }
+
+        function findPathLengthAtPoint(pathEl, x, y) {
+            const total = pathEl.getTotalLength();
+            let bestLen = 0;
+            let bestDist = Infinity;
+            const steps = Math.max(80, Math.ceil(total / 3));
+            for (let i = 0; i <= steps; i++) {
+                const len = (i / steps) * total;
+                const p = pathEl.getPointAtLength(len);
+                const d = (p.x - x) ** 2 + (p.y - y) ** 2;
+                if (d < bestDist) {
+                    bestDist = d;
+                    bestLen = len;
+                }
+            }
+            return { len: bestLen, t: total > 0 ? bestLen / total : 0 };
+        }
+
+        function getPathNormal(pathEl, len) {
+            const total = pathEl.getTotalLength();
+            const p = pathEl.getPointAtLength(len);
+            const p2 = pathEl.getPointAtLength(Math.min(len + 2, total));
+            const dx = p2.x - p.x;
+            const dy = p2.y - p.y;
+            const mag = Math.hypot(dx, dy) || 1;
+            return { x: p.x, y: p.y, nx: -dy / mag, ny: dx / mag };
+        }
+
+        function refreshMapWaypoints() {
+            const pathEl = document.getElementById('road-path');
+            if (!pathEl || !mapState.knots) return;
+            const total = pathEl.getTotalLength();
+            mapState.waypoints = mapState.knots.map(knot => {
+                const { len, t } = findPathLengthAtPoint(pathEl, knot.x, knot.y);
+                const pn = getPathNormal(pathEl, len);
+                const road = svgToOverlay(pn.x, pn.y);
+                let mx = pn.x;
+                let my = pn.y;
+                if (knot.type === 'monster') {
+                    const side = knot.index % 2 === 0 ? -1 : 1;
+                    mx += pn.nx * MONSTER_SIDE_OFFSET * side;
+                    my += pn.ny * MONSTER_SIDE_OFFSET * side;
+                }
+                const monster = svgToOverlay(mx, my);
+                return {
+                    type: knot.type,
+                    index: knot.index,
+                    t,
+                    len,
+                    roadOx: road.x,
+                    roadOy: road.y,
+                    monsterOx: monster.x,
+                    monsterOy: monster.y
+                };
+            });
+        }
+
+        function getWaypoint(type, index) {
+            return mapState.waypoints.find(wp => {
+                if (type === 'monster') return wp.type === 'monster' && wp.index === index;
+                return wp.type === type;
+            });
+        }
+
+        function getPathNode(type, index) {
+            if (type === 'monster') {
+                return document.querySelector(`.map-marker.monster[data-index="${index}"]`);
+            }
+            return document.querySelector(`.map-marker.${type}-marker`);
         }
 
         function setHeroAt(x, y, animate, durationMs, callback) {
@@ -2078,34 +2179,187 @@
             }
         }
 
-        function scrollPathToNode(node) {
+        function scrollPathToWaypoint(wp) {
+            if (!wp) return;
             const wrap = getPathWrap();
-            const c = nodeCenterInWrap(node, wrap);
-            const targetScroll = c.y - wrap.clientHeight / 2;
-            wrap.scrollTo({ top: Math.max(0, targetScroll), behavior: 'smooth' });
+            const board = document.getElementById('map-board');
+            const boardRect = board.getBoundingClientRect();
+            const wrapRect = wrap.getBoundingClientRect();
+            const yInWrap = wp.roadOy + (boardRect.top - wrapRect.top) + wrap.scrollTop;
+            wrap.scrollTo({ top: Math.max(0, yInWrap - wrap.clientHeight * 0.45), behavior: 'smooth' });
         }
 
-        function enterHeroFromBelow(startNode, callback) {
-            const wrap = getPathWrap();
-            const c = nodeCenterInWrap(startNode, wrap);
-            showHero(true);
-            setHeroAt(c.x, c.y + 72, false);
-            requestAnimationFrame(() => {
-                setHeroAt(c.x, c.y, true, HERO_ENTER_MS, callback);
+        function animateHeroAlongPath(fromT, toT, durationMs, callback) {
+            const pathEl = document.getElementById('road-path');
+            const total = pathEl.getTotalLength();
+            const start = performance.now();
+            const hero = document.getElementById('hero-block');
+            hero.style.transition = 'none';
+
+            function frame(now) {
+                const p = Math.min(1, (now - start) / durationMs);
+                const eased = p < 0.5 ? 2 * p * p : 1 - ((-2 * p + 2) ** 2) / 2;
+                const t = fromT + (toT - fromT) * eased;
+                const pt = pathEl.getPointAtLength(t * total);
+                const pos = svgToOverlay(pt.x, pt.y);
+                hero.style.left = (pos.x - HERO_SIZE / 2) + 'px';
+                hero.style.top = (pos.y - HERO_SIZE / 2) + 'px';
+                if (p < 1) {
+                    requestAnimationFrame(frame);
+                } else {
+                    mapState.heroT = toT;
+                    callback?.();
+                }
+            }
+            requestAnimationFrame(frame);
+        }
+
+        function moveHeroToWaypoint(type, index, durationMs, callback) {
+            const wp = getWaypoint(type, index);
+            if (!wp) {
+                callback?.();
+                return;
+            }
+            scrollPathToWaypoint(wp);
+            setTimeout(() => {
+                animateHeroAlongPath(mapState.heroT, wp.t, durationMs, callback);
+            }, 280);
+        }
+
+        function addGrassDecor(svg, w, h, count) {
+            const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            g.setAttribute('opacity', '0.55');
+            for (let i = 0; i < 16; i++) {
+                const cx = 24 + ((i * 47 + count * 13) % (w - 48));
+                const cy = 30 + ((i * 61 + count * 7) % (h - 60));
+                const bush = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                bush.setAttribute('cx', cx);
+                bush.setAttribute('cy', cy);
+                bush.setAttribute('r', 6 + (i % 3) * 2);
+                bush.setAttribute('fill', i % 2 ? '#5a9e3e' : '#6bab47');
+                g.appendChild(bush);
+            }
+            svg.appendChild(g);
+        }
+
+        function renderMapSvg(layout, pathD) {
+            const svg = document.getElementById('map-svg');
+            const { width, height } = layout;
+            svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+            svg.innerHTML = `
+                <defs>
+                    <linearGradient id="grassGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#6fbf4a"/>
+                        <stop offset="100%" stop-color="#4a9432"/>
+                    </linearGradient>
+                    <linearGradient id="roadGrad" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stop-color="#b8885a"/>
+                        <stop offset="50%" stop-color="#d4a574"/>
+                        <stop offset="100%" stop-color="#b8885a"/>
+                    </linearGradient>
+                </defs>
+                <rect width="${width}" height="${height}" fill="url(#grassGrad)"/>
+            `;
+            addGrassDecor(svg, width, height, layout.knots.length);
+            const shadow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            shadow.setAttribute('id', 'road-shadow');
+            shadow.setAttribute('d', pathD);
+            shadow.setAttribute('fill', 'none');
+            shadow.setAttribute('stroke', '#5d4037');
+            shadow.setAttribute('stroke-width', '52');
+            shadow.setAttribute('stroke-linecap', 'round');
+            shadow.setAttribute('stroke-linejoin', 'round');
+            shadow.setAttribute('opacity', '0.35');
+            svg.appendChild(shadow);
+            const road = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            road.setAttribute('id', 'road-path');
+            road.setAttribute('d', pathD);
+            road.setAttribute('fill', 'none');
+            road.setAttribute('stroke', 'url(#roadGrad)');
+            road.setAttribute('stroke-width', '44');
+            road.setAttribute('stroke-linecap', 'round');
+            road.setAttribute('stroke-linejoin', 'round');
+            svg.appendChild(road);
+            const center = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            center.setAttribute('d', pathD);
+            center.setAttribute('fill', 'none');
+            center.setAttribute('stroke', '#f5deb3');
+            center.setAttribute('stroke-width', '2');
+            center.setAttribute('stroke-dasharray', '7 9');
+            center.setAttribute('stroke-linecap', 'round');
+            center.setAttribute('opacity', '0.65');
+            svg.appendChild(center);
+        }
+
+        function layoutMapMarkers(isOverview) {
+            const markers = document.getElementById('map-markers');
+            markers.innerHTML = '';
+            refreshMapWaypoints();
+
+            mapState.waypoints.forEach(wp => {
+                const el = document.createElement('div');
+                if (wp.type === 'start') {
+                    el.className = 'map-marker start-marker';
+                    el.innerHTML = '🪧';
+                    el.style.left = wp.roadOx + 'px';
+                    el.style.top = wp.roadOy + 'px';
+                } else if (wp.type === 'goal') {
+                    el.className = 'map-marker goal-marker';
+                    el.innerHTML = '🏁<span class="goal-label">D</span>';
+                    el.style.left = wp.roadOx + 'px';
+                    el.style.top = (wp.roadOy - 8) + 'px';
+                } else {
+                    const defeated = defeatedIndices.has(wp.index);
+                    const active = !isOverview && wp.index === currentWordIndex && !defeated &&
+                        (gamePhase === 'battle' || gamePhase === 'walking');
+                    el.className = 'map-marker monster' + (defeated ? ' defeated' : '') + (active ? ' active' : '');
+                    el.dataset.index = String(wp.index);
+                    const emoji = PATH_MONSTERS[wp.index % PATH_MONSTERS.length];
+                    el.innerHTML = defeated ? '' : `<span class="map-monster">${emoji}</span>`;
+                    el.style.left = wp.monsterOx + 'px';
+                    el.style.top = wp.monsterOy + 'px';
+                }
+                markers.appendChild(el);
             });
         }
 
-        function moveHeroToNode(node, durationMs, callback) {
-            if (!node) {
-                if (callback) callback();
-                return;
-            }
+        function applyOverviewScale(layout) {
+            const board = document.getElementById('map-board');
             const wrap = getPathWrap();
-            scrollPathToNode(node);
-            setTimeout(() => {
-                const c = nodeCenterInWrap(node, wrap);
-                setHeroAt(c.x, c.y, true, durationMs, callback);
-            }, 280);
+            board.style.height = layout.height + 'px';
+            board.style.width = '100%';
+            board.style.transform = '';
+            board.style.marginBottom = '0';
+            if (gamePhase === 'overview' && layout.height > wrap.clientHeight) {
+                const scale = Math.max(0.42, (wrap.clientHeight - 12) / layout.height);
+                board.style.transform = `scale(${scale})`;
+                board.style.transformOrigin = 'top center';
+                board.style.marginBottom = (layout.height * scale - layout.height) + 'px';
+            }
+        }
+
+        function renderAdventurePath() {
+            const isOverview = gamePhase === 'overview';
+            const count = roundWordList.length;
+            const layout = computeMapLayout(count);
+            mapState.width = layout.width;
+            mapState.height = layout.height;
+            mapState.knots = layout.knots;
+            const pathD = knotsToPathD(layout.knots);
+
+            renderMapSvg(layout, pathD);
+            applyOverviewScale(layout);
+
+            requestAnimationFrame(() => {
+                layoutMapMarkers(isOverview);
+                if (!isOverview) {
+                    const wp = getWaypoint('monster', currentWordIndex) || getWaypoint('start', -1);
+                    if (wp) scrollPathToWaypoint(wp);
+                } else {
+                    const wrap = getPathWrap();
+                    wrap.scrollTop = wrap.scrollHeight;
+                }
+            });
         }
 
         function beginAdventure() {
@@ -2120,72 +2374,24 @@
             renderAdventurePath();
 
             requestAnimationFrame(() => {
+                refreshMapWaypoints();
+                const startWp = getWaypoint('start', -1);
                 const wrap = getPathWrap();
                 wrap.scrollTop = wrap.scrollHeight;
 
-                const startNode = getPathNode('start');
-                const monsterNode = getPathNode('monster', 0);
-
-                enterHeroFromBelow(startNode, () => {
-                    moveHeroToNode(monsterNode, HERO_WALK_MS, () => {
-                        isHeroAnimating = false;
-                        gamePhase = 'battle';
-                        openBattlePanel();
+                showHero(true);
+                mapState.heroT = startWp.t;
+                setHeroAt(startWp.roadOx, startWp.roadOy + 55, false);
+                requestAnimationFrame(() => {
+                    setHeroAt(startWp.roadOx, startWp.roadOy, true, HERO_ENTER_MS, () => {
+                        moveHeroToWaypoint('monster', 0, HERO_WALK_MS, () => {
+                            isHeroAnimating = false;
+                            gamePhase = 'battle';
+                            openBattlePanel();
+                        });
                     });
                 });
             });
-        }
-
-        function renderAdventurePath() {
-            const path = document.getElementById('adventure-path');
-            const isOverview = gamePhase === 'overview';
-            path.innerHTML = '';
-            const frag = document.createDocumentFragment();
-
-            const goal = document.createElement('div');
-            goal.className = 'path-node goal';
-            goal.innerHTML = '🏁<div class="node-label">Ziel · D</div>';
-            frag.appendChild(goal);
-
-            for (let i = roundWordList.length - 1; i >= 0; i--) {
-                const seg = document.createElement('div');
-                seg.className = 'path-segment' + (defeatedIndices.has(i) ? ' hidden' : '');
-                frag.appendChild(seg);
-
-                const defeated = defeatedIndices.has(i);
-                const active = !isOverview && i === currentWordIndex && !defeated &&
-                    (gamePhase === 'battle' || gamePhase === 'walking');
-                const node = document.createElement('div');
-                node.className = 'path-node monster' + (defeated ? ' defeated' : '') + (active ? ' active' : '');
-                node.dataset.index = String(i);
-
-                const monsterEmoji = PATH_MONSTERS[i % PATH_MONSTERS.length];
-                let inner = '';
-                if (!defeated) inner += `<div class="node-monster">${monsterEmoji}</div>`;
-                node.innerHTML = inner;
-                frag.appendChild(node);
-            }
-
-            const startSeg = document.createElement('div');
-            startSeg.className = 'path-segment';
-            frag.appendChild(startSeg);
-
-            const start = document.createElement('div');
-            start.className = 'path-node start';
-            start.innerHTML = '📍<div class="node-label">Start</div>';
-            frag.appendChild(start);
-
-            path.appendChild(frag);
-
-            if (!isOverview) {
-                requestAnimationFrame(() => {
-                    const activeNode = path.querySelector('.path-node.monster.active') ||
-                        getPathNode('monster', currentWordIndex);
-                    if (activeNode && !defeatedIndices.has(currentWordIndex)) {
-                        scrollPathToNode(activeNode);
-                    }
-                });
-            }
         }
 
         function prepareWord(index) {
@@ -2206,7 +2412,7 @@
                 renderAdventurePath();
                 updateHUD();
                 isHeroAnimating = true;
-                moveHeroToNode(getPathNode('monster', nextIndex), HERO_WALK_MS, () => {
+                moveHeroToWaypoint('monster', nextIndex, HERO_WALK_MS, () => {
                     isHeroAnimating = false;
                     gamePhase = 'battle';
                     openBattlePanel();
@@ -2215,7 +2421,7 @@
                 closeBattleModal();
                 gamePhase = 'walking';
                 isHeroAnimating = true;
-                moveHeroToNode(getPathNode('goal'), HERO_WALK_MS, () => {
+                moveHeroToWaypoint('goal', -1, HERO_WALK_MS, () => {
                     isHeroAnimating = false;
                     endGame();
                 });
