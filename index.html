@@ -19,6 +19,12 @@
             overflow-x: hidden;
         }
 
+        body.game-active {
+            height: 100dvh;
+            max-height: 100dvh;
+            overflow: hidden;
+        }
+
         .screen {
             display: none;
             padding: 20px;
@@ -795,11 +801,16 @@
             display: flex;
             flex-direction: column;
             max-width: 430px;
-            min-height: 100dvh;
+            height: 100dvh;
+            max-height: 100dvh;
+            overflow: hidden;
             margin: 0 auto;
         }
 
         #game-screen .hud {
+            flex-shrink: 0;
+            padding: 10px 12px;
+            margin-bottom: 6px;
             background: rgba(255, 255, 255, 0.92);
             border: 2px solid #7cb342;
             border-radius: 14px;
@@ -833,19 +844,19 @@
         }
 
         .round-info {
+            flex-shrink: 0;
             text-align: center;
             color: #558b2f;
-            font-size: 0.85em;
-            margin-bottom: 8px;
+            font-size: 0.82em;
+            margin-bottom: 4px;
             font-weight: 600;
         }
 
         .adventure-path-wrap {
-            flex: 1;
-            overflow-x: hidden;
-            overflow-y: auto;
+            flex: 1 1 auto;
+            overflow: hidden;
             min-height: 0;
-            margin: 8px 0;
+            margin: 4px 0;
             position: relative;
             border-radius: 16px;
             border: 3px solid #689f38;
@@ -863,6 +874,7 @@
             position: relative;
             width: 100%;
             margin: 0 auto;
+            overflow: hidden;
         }
 
         #game-screen.overview-mode .map-board {
@@ -872,7 +884,7 @@
         .map-svg {
             display: block;
             width: 100%;
-            height: auto;
+            height: 100%;
             vertical-align: top;
         }
 
@@ -947,8 +959,9 @@
         }
 
         .overview-panel {
+            flex-shrink: 0;
             text-align: center;
-            padding: 8px 0 4px;
+            padding: 4px 0 6px;
         }
 
         .overview-hint {
@@ -1012,30 +1025,29 @@
             box-shadow: 0 -8px 32px rgba(0, 255, 255, 0.25);
             max-width: 430px;
             width: 100%;
-            max-height: 34vh;
-            overflow-y: auto;
+            overflow: hidden;
             border-radius: 16px 16px 0 0;
-            padding: 10px 14px 14px;
+            padding: 8px 12px max(10px, env(safe-area-inset-bottom));
         }
 
         .cyber-battle .prompt-line {
             display: flex;
             flex-wrap: wrap;
             align-items: baseline;
-            gap: 6px;
-            margin-bottom: 6px;
-            line-height: 1.35;
+            gap: 4px;
+            margin-bottom: 4px;
+            line-height: 1.25;
         }
 
         .cyber-battle .prompt-label {
             color: #94a3b8;
-            font-size: 0.88em;
+            font-size: 0.82em;
             flex-shrink: 0;
         }
 
         .cyber-battle .prompt-value {
             color: #0ff;
-            font-size: 1.05em;
+            font-size: 0.95em;
             font-weight: bold;
             text-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
             word-break: break-word;
@@ -1043,19 +1055,19 @@
 
         .cyber-battle .prompt-target {
             color: #ff6ec7;
-            font-size: 0.9em;
-            margin-bottom: 8px;
+            font-size: 0.82em;
+            margin-bottom: 6px;
         }
 
         #battle-modal #answer-input {
             width: 100%;
-            padding: 11px 12px;
+            padding: 9px 10px;
             background: rgba(0, 0, 0, 0.5);
             border: 2px solid rgba(0, 255, 255, 0.4);
             border-radius: 10px;
             color: #fff;
-            font-size: 1em;
-            margin-bottom: 8px;
+            font-size: 0.95em;
+            margin-bottom: 6px;
         }
 
         #battle-modal #answer-input:focus {
@@ -1066,7 +1078,7 @@
 
         .btn-attack-cyber {
             width: 100%;
-            padding: 11px;
+            padding: 9px;
             background: linear-gradient(135deg, #ff00aa, #7b2fff);
             border: 1px solid #0ff;
             border-radius: 10px;
@@ -1078,10 +1090,12 @@
 
         #battle-modal .feedback {
             min-height: 0;
-            margin-top: 8px;
+            margin-top: 6px;
             margin-bottom: 0;
-            padding: 8px 10px;
-            font-size: 0.9em;
+            padding: 6px 8px;
+            font-size: 0.82em;
+            line-height: 1.35;
+            overflow: hidden;
         }
 
         #fail-screen {
@@ -1840,6 +1854,7 @@
             document.getElementById('game-screen').classList.remove('active', 'overview-mode');
             document.getElementById('result-screen').classList.remove('active');
             document.getElementById('fail-screen').classList.remove('active');
+            setGameBodyLock(false);
             closeBattleModal();
             showHero(false);
             gamePhase = 'overview';
@@ -2001,6 +2016,7 @@
             document.getElementById('result-screen').classList.remove('active');
             document.getElementById('fail-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active', 'overview-mode');
+            setGameBodyLock(true);
             closeBattleModal();
             showHero(false);
 
@@ -2013,11 +2029,6 @@
             updateHUD();
             renderAdventurePath();
             saveSession();
-
-            requestAnimationFrame(() => {
-                const wrap = document.getElementById('path-wrap');
-                wrap.scrollTop = wrap.scrollHeight;
-            });
 
             const input = document.getElementById('answer-input');
             input.onkeypress = function(e) {
@@ -2045,6 +2056,7 @@
 
         function closeBattleModal() {
             document.getElementById('battle-modal').classList.remove('active');
+            scheduleMapReflow();
         }
 
         function openBattlePanel() {
@@ -2054,6 +2066,7 @@
             input.disabled = false;
             input.classList.remove('error');
             hideFeedback();
+            scheduleMapReflow();
             setTimeout(() => input.focus(), 100);
         }
 
@@ -2067,8 +2080,58 @@
             return document.getElementById('path-wrap');
         }
 
-        function computeMapLayout(monsterCount) {
-            const height = MAP_PAD_TOP + MAP_PAD_BOT + Math.max(1, monsterCount + 1) * MAP_SEG_H;
+        function setGameBodyLock(locked) {
+            document.body.classList.toggle('game-active', locked);
+        }
+
+        function getMapAreaBudget() {
+            const game = document.getElementById('game-screen');
+            if (!game.classList.contains('active')) {
+                return Math.max(200, window.innerHeight * 0.45);
+            }
+            const battle = document.getElementById('battle-modal');
+            const battleH = battle.classList.contains('active') ? battle.offsetHeight : 0;
+            const overview = document.getElementById('overview-panel');
+            const overviewH = overview.style.display !== 'none' ? overview.offsetHeight : 0;
+            const roundInfo = document.getElementById('round-info');
+            const hud = game.querySelector('.hud');
+            const gameStyles = getComputedStyle(game);
+            const padY = parseFloat(gameStyles.paddingTop) + parseFloat(gameStyles.paddingBottom);
+            const fixed = (roundInfo?.offsetHeight || 0) + (hud?.offsetHeight || 0) +
+                overviewH + battleH + padY + 12;
+            return Math.max(140, window.innerHeight - fixed);
+        }
+
+        function syncMapWrapHeight() {
+            const wrap = getPathWrap();
+            const game = document.getElementById('game-screen');
+            if (!wrap || !game.classList.contains('active')) return;
+            const budget = getMapAreaBudget();
+            wrap.style.flex = '1 1 auto';
+            wrap.style.minHeight = '0';
+            wrap.style.maxHeight = budget + 'px';
+            wrap.style.height = 'auto';
+        }
+
+        function scheduleMapReflow() {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    if (!document.getElementById('game-screen').classList.contains('active')) return;
+                    if (!roundWordList.length) return;
+                    renderAdventurePath();
+                });
+            });
+        }
+
+        function computeMapLayout(monsterCount, areaBudget) {
+            const wrap = getPathWrap();
+            const budget = Math.max(120, areaBudget ?? wrap.clientHeight ?? getMapAreaBudget());
+            const segCount = Math.max(1, monsterCount + 1);
+            const segH = Math.min(
+                MAP_SEG_H,
+                Math.max(22, Math.floor((budget - MAP_PAD_TOP - MAP_PAD_BOT - 6) / segCount))
+            );
+            const height = MAP_PAD_TOP + MAP_PAD_BOT + segCount * segH;
             const cx = MAP_W / 2;
             const amp = MAP_W * MAP_ROAD_AMP;
             const knots = [];
@@ -2199,13 +2262,7 @@
         }
 
         function scrollPathToWaypoint(wp) {
-            if (!wp) return;
-            const wrap = getPathWrap();
-            const board = document.getElementById('map-board');
-            const boardRect = board.getBoundingClientRect();
-            const wrapRect = wrap.getBoundingClientRect();
-            const yInWrap = wp.roadOy + (boardRect.top - wrapRect.top) + wrap.scrollTop;
-            wrap.scrollTo({ top: Math.max(0, yInWrap - wrap.clientHeight * 0.45), behavior: 'smooth' });
+            /* Map scales to fit — no internal scrolling */
         }
 
         function animateHeroAlongPath(fromT, toT, durationMs, callback) {
@@ -2239,10 +2296,7 @@
                 callback?.();
                 return;
             }
-            scrollPathToWaypoint(wp);
-            setTimeout(() => {
-                animateHeroAlongPath(mapState.heroT, wp.t, durationMs, callback);
-            }, 280);
+            animateHeroAlongPath(mapState.heroT, wp.t, durationMs, callback);
         }
 
         function addGrassDecor(svg, w, h, count) {
@@ -2342,42 +2396,41 @@
             });
         }
 
-        function applyOverviewScale(layout) {
+        function applyMapFit(layout) {
             const board = document.getElementById('map-board');
             const wrap = getPathWrap();
-            board.style.height = layout.height + 'px';
+            const budget = wrap.clientHeight || getMapAreaBudget();
             board.style.width = '100%';
-            board.style.transform = '';
             board.style.marginBottom = '0';
-            if (gamePhase === 'overview' && layout.height > wrap.clientHeight) {
-                const scale = Math.max(0.42, (wrap.clientHeight - 12) / layout.height);
-                board.style.transform = `scale(${scale})`;
-                board.style.transformOrigin = 'top center';
-                board.style.marginBottom = (layout.height * scale - layout.height) + 'px';
+            if (layout.height <= budget) {
+                board.style.height = layout.height + 'px';
+                board.style.transform = '';
+                return;
             }
+            const scale = Math.max(0.22, budget / layout.height);
+            board.style.height = layout.height + 'px';
+            board.style.transform = `scale(${scale})`;
+            board.style.transformOrigin = 'top center';
+            board.style.marginBottom = (layout.height * scale - layout.height) + 'px';
         }
 
         function renderAdventurePath() {
             const isOverview = gamePhase === 'overview';
             const count = roundWordList.length;
-            const layout = computeMapLayout(count);
-            mapState.width = layout.width;
-            mapState.height = layout.height;
-            mapState.knots = layout.knots;
-            const pathD = knotsToPathD(layout.knots);
-
-            renderMapSvg(layout, pathD);
-            applyOverviewScale(layout);
+            syncMapWrapHeight();
 
             requestAnimationFrame(() => {
+                const wrap = getPathWrap();
+                const areaBudget = Math.max(120, wrap.clientHeight || getMapAreaBudget());
+                const layout = computeMapLayout(count, areaBudget);
+                mapState.width = layout.width;
+                mapState.height = layout.height;
+                mapState.knots = layout.knots;
+                const pathD = knotsToPathD(layout.knots);
+
+                renderMapSvg(layout, pathD);
+                applyMapFit(layout);
                 layoutMapMarkers(isOverview);
-                if (!isOverview) {
-                    const wp = getWaypoint('monster', currentWordIndex) || getWaypoint('start', -1);
-                    if (wp) scrollPathToWaypoint(wp);
-                } else {
-                    const wrap = getPathWrap();
-                    wrap.scrollTop = wrap.scrollHeight;
-                }
             });
         }
 
@@ -2395,8 +2448,6 @@
             requestAnimationFrame(() => {
                 refreshMapWaypoints();
                 const startWp = getWaypoint('start', -1);
-                const wrap = getPathWrap();
-                wrap.scrollTop = wrap.scrollHeight;
 
                 showHero(true);
                 mapState.heroT = startWp.t;
@@ -2561,6 +2612,7 @@
         function triggerFailScreen() {
             closeBattleModal();
             showHero(false);
+            setGameBodyLock(false);
             document.getElementById('game-screen').classList.remove('active', 'overview-mode');
             document.getElementById('overview-panel').style.display = 'none';
             const fail = document.getElementById('fail-screen');
@@ -2707,6 +2759,7 @@
         function endGame() {
             closeBattleModal();
             showHero(false);
+            setGameBodyLock(false);
             document.getElementById('game-screen').classList.remove('active', 'overview-mode');
             document.getElementById('overview-panel').style.display = 'none';
             document.getElementById('result-screen').classList.add('active');
@@ -2795,6 +2848,16 @@
 
         document.getElementById('save-list-name').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') confirmSaveAndLeave();
+        });
+
+        let resizeMapTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeMapTimer);
+            resizeMapTimer = setTimeout(() => {
+                if (document.getElementById('game-screen').classList.contains('active')) {
+                    renderAdventurePath();
+                }
+            }, 120);
         });
 
         renderSavedLists();
